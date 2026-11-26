@@ -635,7 +635,8 @@ window.PingApp = {
 $("#backup-export").addEventListener("click", () => {
   if (!data) return showNotice("Les données sont illisibles : export impossible.", true);
   try {
-    const blob = new Blob([JSON.stringify({ format: "ping-points-backup", version: 1, data }, null, 2)], { type: "application/json" });
+    const { backup } = window.PingApp.backupSnapshot();
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url; link.download = "ping-points-sauvegarde.json";

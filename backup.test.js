@@ -1,6 +1,8 @@
 "use strict";
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const vm = require("node:vm");
 const { validateBackup } = require("./backup.js");
 
 const original = {
@@ -49,4 +51,32 @@ test("les sauvegardes invalides sont refusées avant toute restauration", () => 
     { ...original, data: { ...original.data, equipment: [{ ...original.data.equipment[0], kind: "other" }] } }
   ]) assert.throws(() => validateBackup(corrupt));
   assert.equal(original.data.matches[0].opponent, "Joueur exemple");
+});
+
+test("l’export refuse une copie périmée après une modification dans un autre onglet", async () => {
+  const source = fs.readFileSync("app.js", "utf8");
+  const start = source.indexOf("window.PingApp = {");
+  const end = source.indexOf('$("#backup-import").addEventListener', start);
+  assert.ok(start >= 0 && end > start);
+  const state = { stored: JSON.stringify(original.data), blob: null, downloads: 0, notice: "" };
+  const button = { addEventListener(_type, callback) { this.click = callback; } };
+  const context = {
+    data: original.data, observedRaw: state.stored, STORAGE_KEY: "ping-points-data-v2",
+    localStorage: { getItem() { return state.stored; } },
+    PingBackup: { validateBackup }, window: {},
+    document: { createElement() { return { click() { state.downloads++; } }; } },
+    $: () => button, Blob,
+    URL: { createObjectURL(blob) { state.blob = blob; return "blob:test"; }, revokeObjectURL() {} },
+    setTimeout() {},
+    showNotice(text) { state.notice = text; }
+  };
+  vm.runInNewContext(source.slice(start, end), context);
+  button.click();
+  assert.equal(state.downloads, 1);
+  assert.deepEqual(JSON.parse(await state.blob.text()), original);
+
+  state.stored = JSON.stringify({ ...original.data, goal: "Modification ailleurs" });
+  button.click();
+  assert.equal(state.downloads, 1);
+  assert.match(state.notice, /autre onglet/i);
 });
