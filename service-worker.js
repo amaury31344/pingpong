@@ -1,5 +1,5 @@
 "use strict";
-const CACHE = "ping-points-static-v19";
+const CACHE = "ping-points-static-v20";
 const FILES = ["./", "./index.html", "./styles.css", "./app.js", "./share.js", "./profile-photo.js", "./ranking.js", "./competition.js", "./sports.js", "./backup.js", "./cloud-client.bundle.js", "./cloud.js", "./notifications.js", "./directory-core.js", "./directory.js", "./social.js", "./practice.js", "./arcade-engine.js", "./arcade.js", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", event => {

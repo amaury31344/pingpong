@@ -99,6 +99,7 @@
     }
   });
   window.addEventListener("ping-cloud-session", () => {
+    if (enabled && cloud?.getUserId() === user) return;
     stop();
     say(cloud?.getUserId() ? "Active les notifications pour cette page si tu le souhaites." : "Connecte-toi pour activer les notifications.");
   });

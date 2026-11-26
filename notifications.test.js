@@ -67,3 +67,13 @@ test("un refus de permission reste visible et ne lance pas de surveillance", asy
   assert.match(t.elements["#notification-status"].textContent, /refusée/);
   assert.equal(t.state.calls.length, 0);
 });
+
+test("un renouvellement de session du même compte ne désactive pas les alertes", async () => {
+  const t = setup();
+  await t.elements["#notification-toggle"].click();
+  t.state.listeners["ping-cloud-session"]();
+  t.state.row = { latest_message: "1", latest_practice: null, practice_created_at: null, observed_at: "2030-01-01T10:01:00Z" };
+  await t.state.poll();
+  assert.equal(t.state.shown.length, 1);
+  assert.equal(t.elements["#notification-toggle"].textContent, "Désactiver les notifications");
+});
