@@ -360,6 +360,21 @@ $("#souvenir-download").addEventListener("click", () => {
   }
 });
 
+function changeStartingPoints(direction) {
+  const input = $("#starting-points");
+  const current = Number.isFinite(input.valueAsNumber) ? input.valueAsNumber : 500;
+  input.value = String(Math.min(5000, Math.max(0, Number((current + direction).toFixed(2)))));
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+}
+$("#points-decrease").addEventListener("click", () => changeStartingPoints(-1));
+$("#points-increase").addEventListener("click", () => changeStartingPoints(1));
+$("#starting-points").addEventListener("keydown", event => {
+  if ((event.key === "ArrowUp" || event.key === "ArrowDown") && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+    event.preventDefault();
+    changeStartingPoints(event.key === "ArrowUp" ? 1 : -1);
+  }
+});
+
 $("#profile-photo-file").addEventListener("change", async event => {
   const file = event.target.files[0];
   if (!file) return;

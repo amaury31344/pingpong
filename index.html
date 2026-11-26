@@ -224,7 +224,7 @@
             <label>Numéro de licence <span>facultatif</span><input name="license" maxlength="30" placeholder="Ton numéro FFTT"></label>
             <label>Club <span>facultatif</span><input name="club" maxlength="100" placeholder="Ton club"></label>
             <label>Ville <span>facultatif</span><input name="city" maxlength="100" autocomplete="address-level2" placeholder="Ta ville"></label>
-            <label>Points au début de la saison<input name="startingPoints" type="number" step="0.01" min="0" max="5000" required placeholder="Ex. 554"></label>
+            <div class="points-field"><label for="starting-points">Points au début de la saison</label><div class="points-stepper"><button id="points-decrease" type="button" aria-label="Diminuer les points de 1">−</button><input id="starting-points" name="startingPoints" type="number" step="0.01" min="0" max="5000" value="500" required><button id="points-increase" type="button" aria-label="Augmenter les points de 1">+</button></div></div>
             <label class="wide">Bio <span>facultative</span><textarea name="bio" maxlength="300" rows="3" placeholder="Quelques mots sur toi et ton parcours"></textarea></label>
             <p class="form-help wide">Ta bio et ta photo restent privées et ne sont pas publiées dans la recherche de joueurs. Elles sont incluses si tu exportes ou envoies manuellement ta sauvegarde.</p>
             <p class="form-help wide">Le total est une estimation à partir de ce point de départ et des matchs enregistrés. La dérive de mi-saison, les bonus et corrections officiels ne sont pas appliqués automatiquement.</p>
