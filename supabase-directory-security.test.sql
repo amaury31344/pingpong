@@ -48,8 +48,9 @@ begin
   if visible_count <> 0 then raise exception 'Withdrawal failed'; end if;
   begin
     perform public.ping_publish_directory(1, 'Joueur fictif 12345', null, null, null, null, null);
-    raise exception 'Stale publication restored a withdrawn profile';
-  exception when serialization_failure then null;
+    raise exception 'Stale publication restored a withdrawn profile' using errcode = 'XX000';
+  exception when raise_exception then
+    if sqlerrm <> 'Le profil partagé a changé, recommence' then raise; end if;
   end;
   if exists (select 1 from public.ping_my_directory_profile() where published or display_name is not null or recent_matches is not null) then
     raise exception 'Withdrawal retained published data';

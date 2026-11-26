@@ -70,7 +70,7 @@ begin
     where d.owner_id = auth.uid() and d.version = p_expected_version
     returning d.version into saved_version;
   end if;
-  if saved_version is null then raise exception 'Le profil partagé a changé, recommence' using errcode = '40001'; end if;
+  if saved_version is null then raise exception 'Le profil partagé a changé, recommence' using errcode = 'P0001'; end if;
   return saved_version;
 end;
 $$;
@@ -132,7 +132,7 @@ begin
         played = null, wins = null, recent_matches = null, updated_at = now(), version = d.version + 1
     where d.owner_id = auth.uid() and d.version = p_expected_version returning d.version into saved_version;
   end if;
-  if saved_version is null then raise exception 'Le profil partagé a changé, recommence' using errcode = '40001'; end if;
+  if saved_version is null then raise exception 'Le profil partagé a changé, recommence' using errcode = 'P0001'; end if;
   return saved_version;
 end;
 $$;
