@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10233b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Ping Points">
+  <title>Ping Points — ton parcours de pongiste</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="ranking.js"></script>
+  <script defer src="sports.js"></script>
+  <script defer src="backup.js"></script>
+  <script defer src="app.js"></script>
+  <script defer src="arcade-engine.js"></script>
+  <script defer src="arcade.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#accueil"><span class="brand-mark" aria-hidden="true"></span><span>ping<span class="brand-accent">points</span><small>LE PING, ENSEMBLE</small></span></a>
+    <p class="nav-label">TON ESPACE</p>
+    <nav aria-label="Navigation principale">
+      <a href="#accueil" class="nav-item" data-page="accueil"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg></span> Tableau de bord</a>
+      <a href="#matchs" class="nav-item" data-page="matchs"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span> Mes matchs</a>
+      <a href="#joueurs" class="nav-item" data-page="joueurs"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v1"/></svg></span> Trouver des joueurs</a>
+      <a href="#arcade" class="nav-item" data-page="arcade"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="5"/><path d="M7 13h4m-2-2v4m7-3h.01m2 3h.01"/></svg></span> Ping Arcade</a>
+      <a href="#profil" class="nav-item" data-page="profil"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span> Mon profil</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <span class="status-dot"></span>
+      <div><strong>Ton espace personnel</strong><small>Enregistré sur cet appareil</small></div>
+    </div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div><span class="eyebrow">TON ESPACE PONGISTE</span><h1 id="page-title">Tableau de bord</h1></div>
+      <div class="top-actions"><span class="local-pill"><span class="status-dot"></span> Données locales</span><a class="avatar small" href="#profil" id="header-avatar" aria-label="Modifier mon profil">?</a></div>
+    </header>
+
+    <div class="page-wrap">
+      <div id="notice" class="notice" role="status" hidden></div>
+      <section id="accueil" class="page">
+        <div class="hero">
+          <div class="hero-copy"><span class="hero-tag"><span></span> TON SUIVI PERSONNEL</span><h2>Chaque match<br><em>compte.</em></h2><p>Ton parcours, tes progrès et tous les points gagnés à la table, au même endroit.</p><div class="hero-actions"><a class="btn btn-white" href="#matchs">＋ Ajouter un match</a><a class="btn btn-ghost" href="#profil">Compléter mon profil →</a></div></div>
+          <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="paddle"><div class="paddle-face"></div><div class="paddle-handle"></div></div><div class="ball"></div></div>
+        </div>
+        <div class="section-title"><div><span class="eyebrow">TON PARCOURS</span><h2>Vue d’ensemble</h2></div><a href="#profil" class="text-link">Modifier mon profil →</a></div>
+        <div class="stats-grid">
+          <article class="stat-card"><span class="stat-icon blue" aria-hidden="true">↗</span><p>Points estimés</p><strong id="points">—</strong><span id="points-detail">Renseigne ton point de départ</span></article>
+          <article class="stat-card"><span class="stat-icon amber" aria-hidden="true">▦</span><p>Matchs joués</p><strong id="played">0</strong><span id="played-detail">Aucun match pour le moment</span></article>
+          <article class="stat-card"><span class="stat-icon green" aria-hidden="true">✓</span><p>Victoires</p><strong id="wins">0</strong><span id="wins-detail">Prêt pour le prochain match ?</span></article>
+          <article class="stat-card"><span class="stat-icon violet" aria-hidden="true">◎</span><p>Réussite</p><strong id="win-rate">—</strong><span>Sur les matchs enregistrés</span></article>
+        </div>
+        <div class="content-grid">
+          <article class="panel"><div class="panel-head"><div><span class="eyebrow">TON ÉVOLUTION</span><h3>Progression des points</h3></div><span class="subtle-tag">Estimation</span></div><div id="chart" class="chart"></div><p class="chart-note">Calcul indicatif, hors dérive et ajustements FFTT. Seuls les matchs de compétition comptent.</p></article>
+          <article class="panel"><div class="panel-head"><div><span class="eyebrow">EN CE MOMENT</span><h3>Forme récente</h3></div><a href="#matchs" class="text-link">Voir tout →</a></div><div id="recent" class="recent-list"></div></article>
+        </div>
+        <article class="panel goal-panel"><div class="panel-head"><div><span class="eyebrow">MOTIVATION</span><h3>Mon objectif personnel</h3></div></div><form id="goal-form" class="goal-form"><label for="goal-input">Ce que je souhaite travailler</label><input id="goal-input" maxlength="160" placeholder="Ex. améliorer ma régularité en remise"><div class="form-grid goal-target"><label>Points estimés à atteindre <span>facultatif</span><input id="goal-target" type="number" step="0.01" min="0" max="5000" placeholder="Ex. 600"></label><label>Échéance <span>nécessaire si objectif chiffré</span><input id="goal-date" type="date"></label></div><div class="goal-actions"><button class="btn btn-primary" type="submit">Enregistrer</button></div><p id="goal-progress" class="form-help" aria-live="polite"></p><p class="form-help">Estimation personnelle : la progression n’est pas garantie et ce n’est pas un classement officiel.</p></form></article>
+        <article class="panel"><div class="panel-head"><div><span class="eyebrow">LES DERNIERS ÉCHANGES</span><h3>Derniers matchs</h3></div><button class="btn btn-outline add-match" type="button">＋ Ajouter</button></div><div id="recent-matches"></div></article>
+      </section>
+
+      <section id="matchs" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">TON HISTORIQUE</span><h2>Mes matchs</h2><p>Renseigne tes rencontres pour suivre ta progression.</p></div><button class="btn btn-primary add-match" type="button">＋ Ajouter un match</button></div>
+        <div class="info-box">Pour un match officiel, saisis les points de référence de la période pour les deux joueurs et le coefficient de l’épreuve. Les matchs amicaux ne modifient pas les points.</div>
+        <div class="filters"><label>Type<select id="filter-kind"><option value="all">Tous les matchs</option><option value="official">Compétition</option><option value="friendly">Amical</option><option value="legacy">Ancienne saisie</option></select></label><label>Résultat<select id="filter-result"><option value="all">Tous</option><option value="win">Victoires</option><option value="loss">Défaites</option></select></label><label>Du<input id="filter-from" type="date"></label><label>Au<input id="filter-to" type="date"></label><p id="filter-summary" aria-live="polite"></p><p id="filter-levels"></p></div>
+        <article class="panel"><div id="all-matches"></div></article>
+      </section>
+
+      <section id="joueurs" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">LA COMMUNAUTÉ</span><h2>Trouver des joueurs</h2><p>Garde les joueurs que tu connais près de chez toi.</p></div><button class="btn btn-primary" id="add-player" type="button">＋ Ajouter un joueur</button></div>
+        <div class="info-box"><strong>Répertoire personnel :</strong> les joueurs ajoutés restent sur cet appareil. La recherche d’autres utilisateurs en ligne et les distances autour de toi nécessitent un service partagé, pas encore connecté.</div>
+        <article class="panel directory"><label for="directory-search">Rechercher par ville, club ou nom</label><input id="directory-search" type="search" placeholder="Ex. Lille, Loos Sport TT…"><div id="player-list"></div></article>
+      </section>
+
+      <section id="arcade" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">UNE PAUSE LUDIQUE</span><h2>Ping Arcade</h2><p>Une table, deux raquettes : à toi de gagner l’échange.</p></div></div>
+        <div class="info-box">Un jeu d’arcade indépendant de ton suivi sportif : les scores ne modifient ni tes matchs ni tes points FFTT. Ce jeu ne mesure pas ton niveau réel.</div>
+        <div class="arcade-layout">
+          <div class="panel arcade-game">
+            <div class="arcade-score" aria-label="Score"><div>ORDINATEUR <strong id="arcade-opponent-score">0</strong></div><span>À 11 POINTS · 2 D’ÉCART</span><div>TOI <strong id="arcade-player-score">0</strong></div></div>
+            <canvas id="arcade-canvas" width="720" height="1000" role="img" aria-label="Table de jeu vue du dessus, raquette du joueur en bas et ordinateur en haut. Le score et l’état sont indiqués hors du terrain."></canvas>
+            <div id="arcade-touch" class="arcade-touch" aria-label="Zone tactile pour déplacer la raquette">↔ &nbsp; Glisse ici pour déplacer ta raquette</div>
+            <div id="arcade-status" class="arcade-status" role="status" aria-live="polite">Choisis tes réglages puis lance une partie.</div>
+            <div class="arcade-buttons"><button id="arcade-start" type="button" class="btn btn-primary">Lancer la partie</button><button id="arcade-pause" type="button" class="btn btn-outline" disabled>Pause</button><button id="arcade-quit" type="button" class="btn btn-outline" disabled>Quitter</button></div>
+          </div>
+          <aside class="panel arcade-settings">
+            <h3>Réglages de la partie</h3>
+            <label for="arcade-difficulty">Difficulté</label>
+            <select id="arcade-difficulty"><option value="easy">Facile</option><option value="normal" selected>Normal</option><option value="hard">Difficile</option></select>
+            <p class="form-help">Facile : réaction lente, déplacement lent. Normal : intermédiaire. Difficile : réaction rapide, déplacement rapide.</p>
+            <label for="arcade-control">Commande</label>
+            <select id="arcade-control"><option value="keyboard">Clavier : flèches ← →</option><option value="mouse">Souris : sur la table</option><option value="touch">Tactile : zone sous la table</option></select>
+            <label class="check-label"><input id="arcade-discovery" type="checkbox"> Mode découverte : balle plus lente</label>
+            <label class="check-label"><input id="arcade-sound" type="checkbox"> Activer les sons facultatifs</label>
+            <p class="form-help">Match en 11 points avec deux points d’écart. Les rebonds sur les côtés sont une convention arcade. Le record personnel dépend de la difficulté, du mode découverte et de la commande.</p>
+            <p id="arcade-record" class="arcade-record">Record : —</p>
+            <p class="form-help">Le résultat dépend aussi de ton écran et de ton navigateur. Aucune information ne dépend du son ou de la couleur.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section id="profil" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">TON IDENTITÉ</span><h2>Mon profil</h2><p>Personnalise ton espace et définis ton point de départ.</p></div></div>
+        <article class="panel profile-panel">
+          <form id="profile-form" class="form-grid">
+            <label>Prénom<input name="firstName" required maxlength="80" autocomplete="given-name" placeholder="Ton prénom"></label>
+            <label>Nom<input name="lastName" required maxlength="80" autocomplete="family-name" placeholder="Ton nom"></label>
+            <label>Numéro de licence <span>facultatif</span><input name="license" maxlength="30" placeholder="Ton numéro FFTT"></label>
+            <label>Club <span>facultatif</span><input name="club" maxlength="100" placeholder="Ton club"></label>
+            <label>Ville <span>facultatif</span><input name="city" maxlength="100" autocomplete="address-level2" placeholder="Ta ville"></label>
+            <label>Points au début de la saison<input name="startingPoints" type="number" step="0.01" min="0" max="5000" required placeholder="Ex. 554"></label>
+            <p class="form-help wide">Le total est une estimation à partir de ce point de départ et des matchs enregistrés. La dérive de mi-saison, les bonus et corrections officiels ne sont pas appliqués automatiquement.</p>
+            <div class="wide"><button class="btn btn-primary" type="submit">Enregistrer mon profil</button></div>
+          </form>
+        </article>
+        <article class="panel profile-panel backup-panel"><h3>Sauvegarde de cet appareil</h3><p class="form-help">Exporte ton profil, tes matchs, ton répertoire et tes records dans un fichier personnel. La restauration remplace les données actuelles après confirmation. Ce fichier peut contenir des coordonnées : conserve-le en lieu sûr.</p><div class="backup-actions"><button id="backup-export" class="btn btn-outline" type="button">Exporter ma sauvegarde</button><button id="backup-import" class="btn btn-outline" type="button">Restaurer une sauvegarde</button><input id="backup-file" type="file" accept=".json,application/json" hidden></div></article>
+      </section>
+      <footer>Ping Points · Projet indépendant, non affilié à la FFTT · <a href="https://www.fftt.com/wp-content/uploads/2026/07/reglement_generaux_2026_2027.pdf" target="_blank" rel="noopener noreferrer">Barème FFTT 2026–2027</a></footer>
+    </div>
+  </main>
+
+  <dialog id="match-dialog"><form id="match-form" class="dialog-form">
+    <div class="dialog-heading"><div><span class="eyebrow">SUR LA TABLE</span><h2 id="match-dialog-title">Ajouter un match</h2></div><button type="button" class="close-dialog" aria-label="Fermer">×</button></div>
+    <div class="form-grid">
+      <label>Date<input name="date" type="date" required></label>
+      <label>Adversaire<input name="opponent" required maxlength="120" placeholder="Nom et prénom"></label>
+      <label>Résultat<select name="result" required><option value="win">Victoire</option><option value="loss">Défaite</option></select></label>
+      <label>Type de match<select name="kind"><option value="official">Compétition</option><option value="friendly">Amical</option><option value="legacy" hidden>Ancienne saisie manuelle</option></select></label>
+      <label>Score <span>facultatif</span><input name="score" maxlength="30" placeholder="Ex. 3–2"></label>
+      <div class="official-fields wide" id="official-fields">
+        <p>Points de référence au début de la période du match (pas les points virtuels après chaque partie).</p>
+        <div class="form-grid">
+          <label>Mes points de référence<input name="playerReference" type="number" min="0" max="5000" step="0.01" required placeholder="Ex. 554"></label>
+          <label>Points de l’adversaire<input name="opponentReference" type="number" min="0" max="5000" step="0.01" required placeholder="Ex. 564"></label>
+          <label>Coefficient de l’épreuve<select name="coefficient"><option value="1">1 — Championnat par équipes</option><option value="0.5">0,5</option><option value="0.75">0,75</option><option value="1.25">1,25</option><option value="1.5">1,5</option><option value="2">2</option></select></label>
+        </div>
+        <p>Indique les points exacts, pas seulement le classement 5, 6, etc.</p>
+      </div>
+      <div id="legacy-fields" class="official-fields wide" hidden><label>Variation saisie manuellement<input name="legacyDelta" type="number" step="any"></label><p>Cette ancienne saisie ne dispose pas de toutes les références nécessaires au recalcul.</p></div>
+      <label class="wide">Bilan personnel existant <span>facultatif</span><textarea name="notes" maxlength="1000" rows="3" placeholder="Tes notes privées"></textarea></label>
+      <label>Point fort <span>facultatif, privé</span><textarea name="strength" maxlength="500" rows="2" placeholder="Ce qui a bien fonctionné"></textarea></label>
+      <label>Axe de travail <span>facultatif, privé</span><textarea name="improvement" maxlength="500" rows="2" placeholder="Pour la prochaine séance"></textarea></label>
+      <div class="wide"><button class="btn btn-primary full" type="submit">Enregistrer le match</button></div>
+    </div>
+  </form></dialog>
+
+  <dialog id="player-dialog"><form id="player-form" class="dialog-form">
+    <div class="dialog-heading"><div><span class="eyebrow">TON RÉPERTOIRE</span><h2>Ajouter un joueur</h2></div><button type="button" class="close-dialog" aria-label="Fermer">×</button></div>
+    <div class="form-grid">
+      <label>Nom et prénom<input name="name" required maxlength="120" placeholder="Nom du joueur"></label>
+      <label>Ville<input name="city" required maxlength="100" placeholder="Sa ville"></label>
+      <label>Club <span>facultatif</span><input name="club" maxlength="100" placeholder="Son club"></label>
+      <label>Contact <span>facultatif</span><input name="contact" maxlength="120" placeholder="Ex. e-mail communiqué"></label>
+      <p class="form-help wide">N’ajoute des coordonnées qu’avec l’accord de la personne. Elles restent sur cet appareil.</p>
+      <div class="wide"><button class="btn btn-primary full" type="submit">Ajouter au répertoire</button></div>
+    </div>
+  </form></dialog>
+  <dialog id="backup-dialog" aria-labelledby="backup-dialog-title"><form class="dialog-form" method="dialog"><div class="dialog-heading"><div><span class="eyebrow">RESTAURATION</span><h2 id="backup-dialog-title">Vérifie avant de remplacer</h2></div><button class="close-dialog" type="button" aria-label="Fermer">×</button></div><p>La sauvegarde remplacera entièrement les données de cet appareil. Rien ne sera ajouté aux données actuelles.</p><div id="backup-preview" class="backup-preview"></div><p class="form-help">Profil, objectif, matchs, répertoire et records sont concernés. Exporte d’abord une copie si tu souhaites conserver l’état actuel.</p><div class="backup-actions"><button id="backup-confirm" class="btn btn-primary" type="button">Remplacer les données</button><button class="close-dialog btn btn-outline" type="button">Annuler</button></div></form></dialog>
+</body>
+</html>
