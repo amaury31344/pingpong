@@ -68,9 +68,11 @@
     return;
   }
 
+  window.PingCloud = { client, getUserId: () => session?.user?.id ?? null };
   client.auth.onAuthStateChange((_event, nextSession) => {
     session = nextSession;
     renderSession();
+    window.dispatchEvent(new Event("ping-cloud-session"));
   });
 
   login.addEventListener("submit", event => {

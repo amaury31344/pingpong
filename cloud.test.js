@@ -56,6 +56,8 @@ function setup() {
         return true;
       }
     },
+    window: { dispatchEvent() {} },
+    Event: class { constructor(type) { this.type = type; } },
     confirm() { return state.confirmed; }
   };
   vm.runInNewContext(source, context);

@@ -17,6 +17,8 @@
   <script defer src="app.js"></script>
   <script defer src="cloud-client.bundle.js"></script>
   <script defer src="cloud.js"></script>
+  <script defer src="directory-core.js"></script>
+  <script defer src="directory.js"></script>
   <script defer src="arcade-engine.js"></script>
   <script defer src="arcade.js"></script>
 </head>
@@ -108,9 +110,39 @@
       </section>
 
       <section id="joueurs" class="page" hidden>
-        <div class="section-title"><div><span class="eyebrow">LA COMMUNAUTÉ</span><h2>Trouver des joueurs</h2><p>Garde les joueurs que tu connais près de chez toi.</p></div><button class="btn btn-primary" id="add-player" type="button">＋ Ajouter un joueur</button></div>
-        <div class="info-box"><strong>Répertoire personnel :</strong> les joueurs ajoutés restent sur cet appareil. La recherche d’autres utilisateurs en ligne et les distances autour de toi nécessitent un service partagé, pas encore connecté.</div>
-        <article class="panel directory"><label for="directory-search">Rechercher par ville, club ou nom</label><input id="directory-search" type="search" placeholder="Ex. Lille, Loos Sport TT…"><div id="player-list"></div></article>
+        <div class="section-title"><div><span class="eyebrow">LA COMMUNAUTÉ</span><h2>Trouver des joueurs</h2><p>Recherche les joueurs Ping Points qui ont choisi de partager leur profil.</p></div></div>
+        <div class="info-box">La recherche nécessite un compte connecté. Elle ne contient pas tous les joueurs FFTT : les données sont déclarées par chaque joueur et les points affichés sont des estimations non officielles.</div>
+        <article class="panel directory">
+          <h3>Rechercher un joueur</h3>
+          <p id="online-directory-status" class="form-help" role="status" aria-live="polite">Connecte-toi depuis <a href="#profil">Mon profil</a> pour rechercher.</p>
+          <form id="online-directory-search" class="online-directory-search">
+            <label for="online-directory-query">Nom public du joueur</label>
+            <input id="online-directory-query" type="search" minlength="2" maxlength="80" required placeholder="Au moins 2 caractères">
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+          </form>
+          <div id="online-directory-results" aria-live="polite"></div>
+        </article>
+        <article class="panel directory feature-panel">
+          <h3>Partager mon profil</h3>
+          <p class="form-help">Facultatif : les informations choisies seront visibles par les autres comptes connectés, qui peuvent les enregistrer ou les copier. N’indique pas de contact dans ton nom public. La licence, les coordonnées, les notes et les noms d’adversaires ne sont jamais envoyés.</p>
+          <p class="form-help">Les dates et résultats peuvent néanmoins permettre de reconnaître une rencontre. Tu peux retirer ton profil à tout moment ; cela ne supprime pas les copies déjà faites par d’autres.</p>
+          <p class="form-help">Ton profil partagé est un instantané : republie-le pour mettre à jour tes points ou tes matchs.</p>
+          <p id="directory-sharing-status" class="cloud-status" role="status" aria-live="polite">Connecte-toi depuis Mon profil pour partager.</p>
+          <div id="directory-own-profile"></div>
+          <form id="directory-publish" class="form-grid">
+            <label>Nom public ou pseudonyme<input name="name" minlength="2" maxlength="80" required placeholder="Nom à afficher"></label>
+            <label>Club à partager <span>facultatif</span><input name="club" maxlength="100" placeholder="Laisser vide pour ne pas partager"></label>
+            <label class="feature-check"><input name="points" type="checkbox"> Partager mes points estimés</label>
+            <label class="feature-check"><input name="stats" type="checkbox"> Partager mon nombre de matchs et mes victoires</label>
+            <label class="feature-check wide"><input name="matches" type="checkbox"> Partager les dates, types et résultats de mes 10 derniers matchs</label>
+            <label class="feature-check wide"><input name="consent" type="checkbox" required> J’ai au moins 18 ans et j’accepte de rendre ces informations visibles aux comptes connectés.</label>
+            <div class="wide feature-actions"><button class="btn btn-primary" type="submit">Vérifier et publier</button><button id="directory-unpublish" class="btn btn-outline" type="button">Retirer mon profil partagé</button></div>
+          </form>
+        </article>
+        <article class="panel directory feature-panel">
+          <div class="panel-head"><div><h3>Mon répertoire personnel</h3><p class="form-help">Ces contacts restent sur cet appareil et ne sont pas publiés.</p></div><button class="btn btn-outline" id="add-player" type="button">＋ Ajouter</button></div>
+          <label for="directory-search">Rechercher par ville, club ou nom</label><input id="directory-search" type="search" placeholder="Ex. Lille, Loos Sport TT…"><div id="player-list"></div>
+        </article>
       </section>
 
       <section id="arcade" class="page" hidden>
