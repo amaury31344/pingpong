@@ -214,7 +214,7 @@ function renderFilteredMatches(matches = chronological(data.matches).reverse()) 
 }
 
 function navigate() {
-  const allowed = { accueil: "Tableau de bord", matchs: "Mes matchs", joueurs: "Trouver des joueurs", arcade: "Ping Arcade", profil: "Mon profil" };
+  const allowed = { accueil: "Tableau de bord", matchs: "Mes matchs", joueurs: "Trouver des joueurs", arcade: "Ping Arcade", profil: "Mon profil", partager: "Partager et installer" };
   const requested = location.hash.slice(1);
   const page = Object.hasOwn(allowed, requested) ? requested : "accueil";
   document.querySelectorAll(".page").forEach(section => { section.hidden = section.id !== page; });

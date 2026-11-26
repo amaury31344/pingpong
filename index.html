@@ -15,6 +15,7 @@
   <script defer src="sports.js"></script>
   <script defer src="backup.js"></script>
   <script defer src="app.js"></script>
+  <script defer src="share.js"></script>
   <script defer src="cloud-client.bundle.js"></script>
   <script defer src="cloud.js"></script>
   <script defer src="directory-core.js"></script>
@@ -32,6 +33,7 @@
       <a href="#joueurs" class="nav-item" data-page="joueurs"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v1"/></svg></span> Trouver des joueurs</a>
       <a href="#arcade" class="nav-item" data-page="arcade"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="5"/><path d="M7 13h4m-2-2v4m7-3h.01m2 3h.01"/></svg></span> Ping Arcade</a>
       <a href="#profil" class="nav-item" data-page="profil"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span> Mon profil</a>
+      <a href="#partager" class="nav-item" data-page="partager"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="m8 11 8-5M8 13l8 5"/></svg></span> Partager et installer</a>
     </nav>
     <div class="sidebar-bottom">
       <span class="status-dot"></span>
@@ -170,6 +172,29 @@
             <p class="form-help">Le résultat dépend aussi de ton écran et de ton navigateur. Aucune information ne dépend du son ou de la couleur.</p>
           </aside>
         </div>
+      </section>
+
+      <section id="partager" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">PING POINTS ENSEMBLE</span><h2>Partager et installer</h2><p>Invite d’autres pongistes et garde l’application à portée de main.</p></div></div>
+        <article class="panel share-panel">
+          <h3>Partager Ping Points</h3>
+          <p class="form-help">Seul le lien du site est partagé, jamais ton profil ou tes matchs.</p>
+          <label for="share-link">Lien du site</label>
+          <input id="share-link" type="url" value="https://ping-points.vercel.app/" readonly>
+          <div class="backup-actions"><button id="share-app" class="btn btn-primary" type="button" hidden>Partager le lien</button><button id="copy-app-link" class="btn btn-outline" type="button">Copier le lien</button></div>
+          <p id="share-status" class="share-status" role="status" aria-live="polite"></p>
+        </article>
+        <article class="panel share-panel">
+          <h3>Installer sur ton téléphone</h3>
+          <p class="form-help">Ouvre <a href="https://ping-points.vercel.app/">ping-points.vercel.app</a> sur ton téléphone. L’installation ajoute une icône à ton écran d’accueil ; l’application n’est pas dans l’App Store ou Google Play.</p>
+          <button id="install-app" class="btn btn-primary" type="button" hidden>Installer Ping Points</button>
+          <p id="install-status" class="share-status" role="status" aria-live="polite"></p>
+          <div class="install-steps">
+            <div><h4>iPhone ou iPad · Safari</h4><p>Appuie sur le bouton Partager, puis sur « Sur l’écran d’accueil » et enfin « Ajouter ».</p></div>
+            <div><h4>Android · Chrome</h4><p>Ouvre le menu ⋮, puis choisis « Installer l’application » ou « Ajouter à l’écran d’accueil » et confirme.</p></div>
+          </div>
+          <p class="form-help">Les menus peuvent varier selon le navigateur. Les données locales ne sont pas automatiquement transférées vers l’application installée : utilise la sauvegarde dans Mon profil si nécessaire.</p>
+        </article>
       </section>
 
       <section id="profil" class="page" hidden>

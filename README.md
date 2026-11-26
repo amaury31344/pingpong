@@ -12,6 +12,8 @@ Prototype indépendant de la FFTT. Ouvrir `index.html` via un serveur local, par
 
 L'interface est adaptée aux petits écrans et dispose d'un manifeste d'application web (PWA). Sur un site déployé en **HTTPS**, ouvrir l'adresse sur le téléphone, puis choisir « Ajouter à l'écran d'accueil » dans le menu du navigateur (sur iPhone : Partager, puis « Sur l'écran d'accueil »). Les menus et la disponibilité de l'installation varient selon le navigateur et sa version. Ce prototype n'est pas une application native publiée sur les stores.
 
+La rubrique « Partager et installer » permet de partager ou copier uniquement l'adresse publique du site, sans données personnelles. Elle propose les étapes pour iPhone et Android ainsi qu'un bouton d'installation lorsque le navigateur le permet. Si la copie automatique échoue, l'adresse reste sélectionnable manuellement.
+
 `localhost` et `127.0.0.1` désignent l'appareil en cours : l'adresse affichée sur l'ordinateur n'est pas directement celle du téléphone. Un déploiement HTTPS accessible depuis le téléphone est nécessaire pour tester l'installation et le mode hors ligne sur celui-ci. Après une première visite complète en ligne, le service worker met en cache les fichiers de l'application ; la connexion et les copies en ligne nécessitent le réseau. Les données locales restent propres à chaque navigateur ou installation et peuvent être exportées puis restaurées depuis le profil. Ne pas partager le fichier de sauvegarde publiquement : il contient potentiellement des données personnelles.
 
 ## Compte et sauvegarde en ligne
