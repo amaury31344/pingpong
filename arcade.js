@@ -5,6 +5,7 @@
   const canvas = document.querySelector("#arcade-canvas");
   const ctx = canvas.getContext("2d");
   const difficulty = document.querySelector("#arcade-difficulty");
+  const mode = document.querySelector("#arcade-mode");
   const control = document.querySelector("#arcade-control");
   const discovery = document.querySelector("#arcade-discovery");
   const sound = document.querySelector("#arcade-sound");
@@ -21,19 +22,24 @@
   const recordKey = () => `v1:${difficulty.value}:${control.value}:${discovery.checked ? "discovery" : "standard"}`;
   const arcadeVisible = () => !document.querySelector("#arcade").hidden && !document.hidden;
   function message(text) { if (status.textContent !== text) status.textContent = text; }
-  function recordText() { record.textContent = `Record personnel pour ces réglages : ${PingApp.getRecord(recordKey())} renvoi(s) dans un échange`; }
+  function recordText() { record.textContent = mode.value === "coop" ? `Meilleur échange de cette partie : ${game?.cooperative ? game.longest : 0} renvoi(s), non sauvegardé.` : `Record personnel pour ces réglages : ${PingApp.getRecord(recordKey())} renvoi(s) dans un échange`; }
   function controls() {
     const ongoing = ["playing", "countdown", "paused"].includes(state);
-    difficulty.disabled = control.disabled = discovery.disabled = ongoing;
+    mode.disabled = discovery.disabled = ongoing;
+    difficulty.disabled = control.disabled = ongoing || mode.value === "coop";
+    document.querySelector("#arcade-coop-help").hidden = mode.value !== "coop";
     start.disabled = ongoing;
     pause.disabled = !ongoing;
     quit.disabled = !ongoing;
     pause.textContent = state === "paused" ? "Reprendre" : "Pause";
-    touch.hidden = control.value !== "touch";
+    touch.hidden = mode.value === "coop" || control.value !== "touch";
+    document.querySelector("#arcade-opponent-label").textContent = mode.value === "coop" ? "MEILLEUR" : "ORDINATEUR";
+    document.querySelector("#arcade-player-label").textContent = mode.value === "coop" ? "ÉCHANGE" : "TOI";
+    document.querySelector("#arcade-score-label").textContent = mode.value === "coop" ? "RENVOIS ENSEMBLE" : "À 11 POINTS · 2 D’ÉCART";
   }
   function score() {
-    document.querySelector("#arcade-player-score").textContent = game?.playerScore ?? 0;
-    document.querySelector("#arcade-opponent-score").textContent = game?.aiScore ?? 0;
+    document.querySelector("#arcade-player-score").textContent = game?.cooperative ? game.rally : game?.playerScore ?? 0;
+    document.querySelector("#arcade-opponent-score").textContent = game?.cooperative ? game.longest : game?.aiScore ?? 0;
   }
   function beep(frequency) {
     if (!sound.checked || !audio || audio.state !== "running") return;
@@ -45,7 +51,7 @@
     oscillator.start(); oscillator.stop(audio.currentTime + 0.06);
   }
   function saveBest() {
-    if (!game || game.longest <= PingApp.getRecord(recordKey())) return true;
+    if (!game || game.cooperative || game.longest <= PingApp.getRecord(recordKey())) return true;
     const saved = PingApp.saveRecord(recordKey(), game.longest);
     recordText();
     return saved;
@@ -79,16 +85,27 @@
       const current = Math.ceil(countdown);
       if (current > 0 && current !== announced) { announced = current; message(`Reprise dans ${current}…`); }
       if (countdown <= 0) {
-        if (game.state === "between") game.serve(game.playerScore + game.aiScore === 0 ? 1 : (game.playerScore + game.aiScore) % 2 ? -1 : 1);
+        if (game.state === "between") {
+          game.serve(game.playerScore + game.aiScore === 0 ? 1 : (game.playerScore + game.aiScore) % 2 ? -1 : 1);
+          score();
+        }
         state = "playing"; message("Échange en cours.");
       }
     } else if (state === "playing") {
-      if (control.value === "keyboard") {
+      if (mode.value === "coop" || control.value === "keyboard") {
         const direction = Number(keys.has("ArrowRight")) - Number(keys.has("ArrowLeft"));
         game.movePlayer(game.playerX + direction * 700 * dt);
       }
+      if (game.cooperative) {
+        const direction = Number(keys.has("d")) - Number(keys.has("a"));
+        game.movePartner(game.aiX + direction * 700 * dt);
+      }
       const events = game.step(dt);
-      if (events.includes("hit")) beep(470);
+      if (events.includes("hit")) { beep(470); if (game.cooperative) { score(); recordText(); } }
+      if (events.includes("rally-end")) {
+        beep(250); score(); recordText();
+        startCountdown(`Échange terminé : ${game.rally} renvoi(s). Recommencez ensemble.`);
+      }
       if (events.includes("player-point") || events.includes("ai-point")) {
         beep(250); score();
         if (events.includes("finished")) finish();
@@ -118,7 +135,7 @@
   }
   start.addEventListener("click", () => {
     if (!arcadeVisible()) return;
-    game = new engine.Game(difficulty.value, discovery.checked);
+    game = new engine.Game(difficulty.value, discovery.checked, Math.random, mode.value === "coop");
     score(); recordText(); startCountdown("Prépare-toi.");
   });
   pause.addEventListener("click", () => {
@@ -132,7 +149,7 @@
     message(`Partie quittée. Plus long échange : ${game.longest} renvoi(s).${saved ? "" : " Record non enregistré sur cet appareil."}`);
     draw();
   });
-  [difficulty, control, discovery].forEach(field => field.addEventListener("change", () => { controls(); recordText(); }));
+  [difficulty, control, discovery, mode].forEach(field => field.addEventListener("change", () => { game = null; controls(); score(); recordText(); draw(); }));
   sound.addEventListener("change", () => {
     if (!sound.checked) return;
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -146,11 +163,12 @@
     }
   });
   document.addEventListener("keydown", event => {
-    if (!arcadeVisible() || control.value !== "keyboard" || !["playing", "countdown"].includes(state) || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    const key = event.key.toLowerCase();
+    if (!arcadeVisible() || (mode.value !== "coop" && control.value !== "keyboard") || !["playing", "countdown"].includes(state) || !["arrowleft", "arrowright", ...(mode.value === "coop" ? ["a", "d"] : [])].includes(key)) return;
     if (["INPUT", "SELECT", "TEXTAREA"].includes(event.target.tagName)) return;
-    event.preventDefault(); keys.add(event.key);
+    event.preventDefault(); keys.add(key === "arrowleft" ? "ArrowLeft" : key === "arrowright" ? "ArrowRight" : key);
   });
-  document.addEventListener("keyup", event => keys.delete(event.key));
+  document.addEventListener("keyup", event => keys.delete(event.key.toLowerCase() === "arrowleft" ? "ArrowLeft" : event.key.toLowerCase() === "arrowright" ? "ArrowRight" : event.key.toLowerCase()));
   window.addEventListener("blur", () => pauseGame("Fenêtre inactive."));
   document.addEventListener("visibilitychange", () => { if (document.hidden) pauseGame("Application en arrière-plan."); });
   window.addEventListener("hashchange", () => {
@@ -159,7 +177,7 @@
   });
   window.addEventListener("ping-data-restored", recordText);
   canvas.addEventListener("pointermove", event => {
-    if (game && control.value === "mouse" && event.pointerType === "mouse" && state === "playing") {
+    if (game && !game.cooperative && control.value === "mouse" && event.pointerType === "mouse" && state === "playing") {
       const bounds = canvas.getBoundingClientRect();
       game.movePlayer((event.clientX - bounds.left) / bounds.width * engine.WIDTH);
     }

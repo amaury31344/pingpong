@@ -10,11 +10,12 @@
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
   class Game {
-    constructor(difficulty, discovery, random = Math.random) {
+    constructor(difficulty, discovery, random = Math.random, cooperative = false) {
       if (!Object.hasOwn(DIFFICULTIES, difficulty)) throw new Error("Difficulté invalide.");
       this.difficulty = DIFFICULTIES[difficulty];
       this.discovery = discovery;
       this.random = random;
+      this.cooperative = cooperative;
       this.playerX = this.aiX = this.aiTarget = WIDTH / 2;
       this.playerScore = this.aiScore = this.rally = this.longest = this.returns = 0;
       this.reactionTimer = 0;
@@ -24,6 +25,10 @@
 
     movePlayer(x) {
       this.playerX = clamp(x, LEFT + PADDLE_WIDTH / 2, RIGHT - PADDLE_WIDTH / 2);
+    }
+
+    movePartner(x) {
+      if (this.cooperative) this.aiX = clamp(x, LEFT + PADDLE_WIDTH / 2, RIGHT - PADDLE_WIDTH / 2);
     }
 
     serve(direction = 1) {
@@ -55,13 +60,15 @@
     }
 
     tick(dt, events) {
-      this.reactionTimer -= dt;
-      if (this.reactionTimer <= 0) {
-        this.aiTarget = this.ball.x;
-        this.reactionTimer = this.difficulty.reaction;
+      if (!this.cooperative) {
+        this.reactionTimer -= dt;
+        if (this.reactionTimer <= 0) {
+          this.aiTarget = this.ball.x;
+          this.reactionTimer = this.difficulty.reaction;
+        }
+        const move = this.difficulty.speed * (this.discovery ? 0.8 : 1) * dt;
+        this.aiX = clamp(this.aiX + clamp(this.aiTarget - this.aiX, -move, move), LEFT + PADDLE_WIDTH / 2, RIGHT - PADDLE_WIDTH / 2);
       }
-      const move = this.difficulty.speed * (this.discovery ? 0.8 : 1) * dt;
-      this.aiX = clamp(this.aiX + clamp(this.aiTarget - this.aiX, -move, move), LEFT + PADDLE_WIDTH / 2, RIGHT - PADDLE_WIDTH / 2);
       const ball = this.ball, previousY = ball.y;
       ball.x += ball.vx * dt;
       ball.y += ball.vy * dt;
@@ -78,6 +85,11 @@
         events.push("hit");
       }
       if (ball.y < -RADIUS || ball.y > HEIGHT + RADIUS) {
+        if (this.cooperative) {
+          this.state = "between";
+          events.push("rally-end");
+          return;
+        }
         const winner = ball.y < 0 ? "player" : "ai";
         if (winner === "player") this.playerScore++;
         else this.aiScore++;

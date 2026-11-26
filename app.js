@@ -194,6 +194,7 @@ function render(refreshForms = false) {
   $("#win-rate").textContent = matches.length ? `${Math.round(wins / matches.length * 100)} %` : "—";
   $("#recent-matches").innerHTML = table(matches.slice(0, 5), false);
   renderFilteredMatches(matches);
+  renderConfrontations();
   $("#recent").innerHTML = matches.length ? matches.slice(0, 4).map(match => `<div class="recent-item"><span class="result-icon ${match.result}">${match.result === "win" ? "V" : "D"}</span><div><strong>${escapeHtml(match.opponent)}</strong><small>${escapeHtml(dateLabel(match.date))}</small></div><span class="delta ${match.result}">${match.kind === "friendly" ? "Amical" : `${signed(match.delta)} pts`}</span></div>`).join("") : '<div class="empty">Tes derniers résultats apparaîtront ici.</div>';
   renderChart(data.matches);
   renderDirectory();
@@ -226,6 +227,39 @@ function render(refreshForms = false) {
     $("#profile-photo-status").textContent = "JPEG, PNG ou WebP, 5 Mo maximum. La photo sera recadrée au centre.";
   }
 }
+
+function renderConfrontations() {
+  const input = $("#confrontation-name");
+  const names = [...new Set(data.matches.map(match => match.opponent))].sort((a, b) => a.localeCompare(b, "fr"));
+  $("#confrontation-names").replaceChildren(...names.map(name => {
+    const option = document.createElement("option");
+    option.value = name;
+    return option;
+  }));
+  const matches = PingCompetition.confrontations(data.matches, input.value);
+  $("#confrontation-summary").textContent = input.value.trim() ? `${matches.length} match(s) · ${matches.filter(match => match.result === "win").length} victoire(s).` : "Saisis un nom pour afficher tes confrontations.";
+  $("#confrontation-results").innerHTML = matches.length ? table(matches, false) : "";
+}
+
+$("#confrontation-name").addEventListener("input", () => { if (data) renderConfrontations(); });
+$("#simulation-form").addEventListener("submit", event => {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget), output = $("#simulation-result");
+  output.replaceChildren();
+  try {
+    const rows = PingCompetition.simulate(Number(form.get("reference")), Number(form.get("coefficient")), form.get("opponents"));
+    for (const row of rows) {
+      const line = document.createElement("p");
+      line.textContent = `${row.name} (${number(row.points)} pts) : victoire ${signed(row.win)} pts ; défaite ${signed(row.loss)} pts.`;
+      output.append(line);
+    }
+    const total = document.createElement("p");
+    total.textContent = `Si toutes les parties sont gagnées : ${signed(rows.reduce((sum, row) => sum + row.win, 0))} pts ; si toutes sont perdues : ${signed(rows.reduce((sum, row) => sum + row.loss, 0))} pts. Estimation non officielle.`;
+    output.append(total);
+  } catch (error) {
+    output.textContent = error.message;
+  }
+});
 
 function renderFilteredMatches(matches = chronological(data.matches).reverse()) {
   const filters = { kind: $("#filter-kind").value, result: $("#filter-result").value, from: $("#filter-from").value, to: $("#filter-to").value };

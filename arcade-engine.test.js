@@ -59,3 +59,18 @@ test("les niveaux et le mode découverte changent les paramètres", () => {
   assert.ok(easy.difficulty.reaction > hard.difficulty.reaction);
   assert.ok(Math.hypot(...[hard.ball.vx, hard.ball.vy]) < Math.hypot(...[easy.ball.vx, easy.ball.vy]));
 });
+
+test("en coopération le second joueur déplace la raquette et un raté termine l’échange sans points", () => {
+  const game = new Game("normal", false, () => 0.5, true);
+  game.movePartner(200);
+  game.serve();
+  game.ball = { x: 200, y: AI_Y + 12, vx: 0, vy: -420 };
+  assert.ok(game.step(1 / 60).includes("hit"));
+  assert.equal(game.aiX, 200);
+  game.ball = { x: 60, y: 1009, vx: 0, vy: 420 };
+  assert.deepEqual(game.step(1 / 60), ["rally-end"]);
+  assert.equal(game.playerScore + game.aiScore, 0);
+  assert.equal(game.longest, 1);
+  game.serve();
+  assert.equal(game.rally, 0);
+});
