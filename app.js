@@ -22,6 +22,9 @@ let pendingBackup = null;
 let pendingBackupRaw = null;
 let editingEquipmentId = null;
 let souvenir = null;
+let pendingPhoto = "";
+let photoRequest = 0;
+let photoProcessing = false;
 const equipmentKinds = { racket: "Raquette", forehand: "Revêtement coup droit", backhand: "Revêtement revers" };
 
 function showNotice(message, error = false) {
@@ -160,10 +163,24 @@ function renderDirectory() {
   $("#player-list").innerHTML = players.length ? players.map(player => `<div class="directory-row"><span class="avatar">${escapeHtml(initials(player.name))}</span><div><strong>${escapeHtml(player.name)}</strong><small>${escapeHtml(player.city)}${player.club ? ` · ${escapeHtml(player.club)}` : ""}${player.contact ? ` · Contact : ${escapeHtml(player.contact)}` : ""}</small></div><button type="button" class="delete-btn" data-delete-player="${escapeHtml(player.id)}">Supprimer</button></div>`).join("") : `<div class="empty">${query ? "Aucun joueur ne correspond à ta recherche." : "Ton répertoire est vide. Ajoute les joueurs que tu connais."}</div>`;
 }
 
+function renderPhotoPreview() {
+  const preview = $("#profile-photo-preview");
+  preview.hidden = !pendingPhoto;
+  if (pendingPhoto) preview.src = pendingPhoto;
+  else preview.removeAttribute("src");
+  $("#profile-photo-remove").hidden = !pendingPhoto;
+}
+
 function render(refreshForms = false) {
   if (!data) return;
   const profile = data.profile;
   $("#header-avatar").textContent = profile ? initials(`${profile.firstName} ${profile.lastName}`) : "?";
+  if (profile?.photo && PingProfilePhoto.isValid(profile.photo)) {
+    const image = document.createElement("img");
+    image.src = profile.photo;
+    image.alt = "";
+    $("#header-avatar").replaceChildren(image);
+  }
   const points = estimatedPoints();
   $("#points").textContent = points === null ? "—" : number(points);
   $("#points-detail").textContent = points === null ? "Renseigne ton point de départ" : `${signed(points - profile.startingPoints)} pts depuis le départ · estimé`;
@@ -193,12 +210,20 @@ function render(refreshForms = false) {
       ? `${number(remaining)} points estimés restants avant ${dateLabel(data.goalTarget.dueDate)}.`
       : `Cible de ${number(data.goalTarget.points)} points estimés atteinte ; échéance : ${dateLabel(data.goalTarget.dueDate)}.`;
   }
-  if (refreshForms && profile) {
-    for (const [key, value] of Object.entries(profile)) {
-      const field = $("#profile-form").elements.namedItem(key);
-      if (field) field.value = value ?? "";
+  if (refreshForms) {
+    $("#profile-form").reset();
+    if (profile) {
+      for (const [key, value] of Object.entries(profile)) {
+        const field = $("#profile-form").elements.namedItem(key);
+        if (field) field.value = value ?? "";
+      }
     }
-  } else if (refreshForms) $("#profile-form").reset();
+    photoRequest++;
+    photoProcessing = false;
+    pendingPhoto = profile?.photo && PingProfilePhoto.isValid(profile.photo) ? profile.photo : "";
+    renderPhotoPreview();
+    $("#profile-photo-status").textContent = "JPEG, PNG ou WebP, 5 Mo maximum. La photo sera recadrée au centre.";
+  }
 }
 
 function renderFilteredMatches(matches = chronological(data.matches).reverse()) {
@@ -334,13 +359,44 @@ $("#souvenir-download").addEventListener("click", () => {
   }
 });
 
+$("#profile-photo-file").addEventListener("change", async event => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const request = ++photoRequest;
+  photoProcessing = true;
+  $("#profile-photo-status").textContent = "Préparation de la photo…";
+  try {
+    const photo = await PingProfilePhoto.prepare(file);
+    if (request !== photoRequest) return;
+    pendingPhoto = photo;
+    renderPhotoPreview();
+    $("#profile-photo-status").textContent = "Photo prête. Enregistre ton profil pour la conserver.";
+  } catch (error) {
+    if (request !== photoRequest) return;
+    $("#profile-photo-status").textContent = `Photo non ajoutée : ${error.message}`;
+  } finally {
+    if (request === photoRequest) {
+      photoProcessing = false;
+      event.target.value = "";
+    }
+  }
+});
+$("#profile-photo-remove").addEventListener("click", () => {
+  photoRequest++;
+  photoProcessing = false;
+  pendingPhoto = "";
+  $("#profile-photo-file").value = "";
+  renderPhotoPreview();
+  $("#profile-photo-status").textContent = "Photo retirée de l’aperçu. Enregistre ton profil pour confirmer.";
+});
 $("#profile-form").addEventListener("submit", event => {
   event.preventDefault();
   if (!data) return showNotice("Corrige les données enregistrées avant de modifier le profil.", true);
+  if (photoProcessing) return showNotice("Attends la fin de la préparation de la photo.", true);
   const form = new FormData(event.currentTarget);
   const firstName = form.get("firstName").trim(), lastName = form.get("lastName").trim();
   if (!firstName || !lastName) return showNotice("Indique ton prénom et ton nom.", true);
-  const profile = { firstName, lastName, license: form.get("license").trim(), club: form.get("club").trim(), city: form.get("city").trim(), startingPoints: Number(form.get("startingPoints")) };
+  const profile = { firstName, lastName, license: form.get("license").trim(), club: form.get("club").trim(), city: form.get("city").trim(), startingPoints: Number(form.get("startingPoints")), bio: form.get("bio").trim(), photo: pendingPhoto };
   if (save({ ...data, profile })) { render(); showNotice("Ton profil a été enregistré sur cet appareil."); }
 });
 

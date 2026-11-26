@@ -25,10 +25,18 @@ test("les sauvegardes antérieures sans nouveaux champs restent lisibles", () =>
   const { score, strength, improvement, ...match } = data.matches[0];
   assert.deepEqual(validateBackup({ ...original, data: { ...data, matches: [match] } }), { ...data, matches: [match] });
 });
+test("la bio et la photo sont conservées dans la sauvegarde", () => {
+  const profile = { ...original.data.profile, bio: "J’aime jouer en équipe", photo: "data:image/jpeg;base64,/9j/2Q==" };
+  const copy = JSON.parse(JSON.stringify({ ...original, data: { ...original.data, profile } }));
+  assert.deepEqual(validateBackup(copy).profile, profile);
+});
 test("les sauvegardes invalides sont refusées avant toute restauration", () => {
   for (const corrupt of [
     { ...original, version: 2 },
     { ...original, data: { ...original.data, matches: "invalid" } },
+    { ...original, data: { ...original.data, profile: { ...original.data.profile, bio: "a".repeat(301) } } },
+    { ...original, data: { ...original.data, profile: { ...original.data.profile, photo: "data:image/svg+xml;base64,PHN2Zz4=" } } },
+    { ...original, data: { ...original.data, profile: { ...original.data.profile, photo: "data:image/jpeg;base64," + "A".repeat(140001) } } },
     { ...original, data: { ...original.data, arcadeRecords: { "invalid": 5 } } },
     { ...original, data: { ...original.data, goalTarget: { points: 600, dueDate: "2026-02-31" } } },
     { ...original, data: { ...original.data, goalTarget: { points: -1, dueDate: "2027-06-30" } } },

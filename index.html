@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="styles.css">
   <script defer src="ranking.js"></script>
   <script defer src="sports.js"></script>
+  <script defer src="profile-photo.js"></script>
   <script defer src="backup.js"></script>
   <script defer src="app.js"></script>
   <script defer src="share.js"></script>
@@ -201,12 +202,18 @@
         <div class="section-title"><div><span class="eyebrow">TON IDENTITÉ</span><h2>Mon profil</h2><p>Personnalise ton espace et définis ton point de départ.</p></div></div>
         <article class="panel profile-panel">
           <form id="profile-form" class="form-grid">
+            <div class="wide profile-photo-area">
+              <img id="profile-photo-preview" class="profile-photo-preview" alt="Aperçu de ta photo de profil" hidden>
+              <div><label for="profile-photo-file">Photo de profil <span>facultative</span></label><input id="profile-photo-file" type="file" accept="image/jpeg,image/png,image/webp"><button id="profile-photo-remove" class="btn btn-outline" type="button" hidden>Retirer la photo</button><p id="profile-photo-status" class="form-help" role="status" aria-live="polite">JPEG, PNG ou WebP, 5 Mo maximum. La photo sera recadrée au centre.</p></div>
+            </div>
             <label>Prénom<input name="firstName" required maxlength="80" autocomplete="given-name" placeholder="Ton prénom"></label>
             <label>Nom<input name="lastName" required maxlength="80" autocomplete="family-name" placeholder="Ton nom"></label>
             <label>Numéro de licence <span>facultatif</span><input name="license" maxlength="30" placeholder="Ton numéro FFTT"></label>
             <label>Club <span>facultatif</span><input name="club" maxlength="100" placeholder="Ton club"></label>
             <label>Ville <span>facultatif</span><input name="city" maxlength="100" autocomplete="address-level2" placeholder="Ta ville"></label>
             <label>Points au début de la saison<input name="startingPoints" type="number" step="0.01" min="0" max="5000" required placeholder="Ex. 554"></label>
+            <label class="wide">Bio <span>facultative</span><textarea name="bio" maxlength="300" rows="3" placeholder="Quelques mots sur toi et ton parcours"></textarea></label>
+            <p class="form-help wide">Ta bio et ta photo restent privées et ne sont pas publiées dans la recherche de joueurs. Elles sont incluses si tu exportes ou envoies manuellement ta sauvegarde.</p>
             <p class="form-help wide">Le total est une estimation à partir de ce point de départ et des matchs enregistrés. La dérive de mi-saison, les bonus et corrections officiels ne sont pas appliqués automatiquement.</p>
             <div class="wide"><button class="btn btn-primary" type="submit">Enregistrer mon profil</button></div>
           </form>

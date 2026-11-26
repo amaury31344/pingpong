@@ -1,5 +1,6 @@
 (function (root) {
   "use strict";
+  const profilePhoto = typeof module !== "undefined" && module.exports ? require("./profile-photo.js") : root.PingProfilePhoto;
   const isText = (value, limit) => typeof value === "string" && value.length <= limit;
   const finite = value => typeof value === "number" && Number.isFinite(value);
   const validDate = value => {
@@ -15,6 +16,7 @@
     if (!Array.isArray(data.matches) || !Array.isArray(data.players) || data.matches.length > 10000 || data.players.length > 10000) throw new Error("Liste de matchs ou de joueurs invalide.");
     const profile = data.profile;
     if (profile !== null && (!profile || !isText(profile.firstName, 80) || !profile.firstName.trim() || !isText(profile.lastName, 80) || !profile.lastName.trim() || !isText(profile.license, 30) || !isText(profile.club, 100) || !isText(profile.city, 100) || !finite(profile.startingPoints) || profile.startingPoints < 0 || profile.startingPoints > 5000)) throw new Error("Profil invalide.");
+    if (profile && ((profile.bio !== undefined && !isText(profile.bio, 300)) || (profile.photo !== undefined && profile.photo !== "" && !profilePhoto.isValid(profile.photo)))) throw new Error("Bio ou photo de profil invalide.");
     if (data.goal !== undefined && !isText(data.goal, 160)) throw new Error("Objectif invalide.");
     if (data.goalTarget !== undefined && data.goalTarget !== null && (!data.goalTarget || !finite(data.goalTarget.points) || data.goalTarget.points < 0 || data.goalTarget.points > 5000 || !validDate(data.goalTarget.dueDate))) throw new Error("Objectif chiffré invalide.");
     const ids = new Set();

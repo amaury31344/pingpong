@@ -4,7 +4,7 @@ const assert = require("node:assert/strict");
 const { buildProfile } = require("./directory-core.js");
 
 const data = {
-  profile: { startingPoints: 600, firstName: "Privé", license: "secret" },
+  profile: { startingPoints: 600, firstName: "Privé", license: "secret", bio: "bio privée", photo: "data:image/jpeg;base64,c2VjcmV0" },
   matches: [
     { date: "2026-09-01", kind: "official", result: "win", delta: 6, opponent: "Secret", notes: "Privé" },
     { date: "2026-09-03", kind: "friendly", result: "loss", delta: 0, opponent: "Secret" }
@@ -19,6 +19,7 @@ test("seuls les champs choisis et les matchs sans adversaire sont partagés", ()
     p_matches: [{ date: "2026-09-03", result: "loss", kind: "friendly" }, { date: "2026-09-01", result: "win", kind: "official" }]
   });
   assert.doesNotMatch(JSON.stringify(result), /secret|privé/i);
+  assert.doesNotMatch(JSON.stringify(result), /data:image/);
 });
 
 test("les champs facultatifs restent privés par défaut et les points nécessitent une base", () => {
