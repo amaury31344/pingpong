@@ -323,6 +323,21 @@ window.PingApp = {
   saveRecord(key, value) {
     if (!data) return false;
     return save({ ...data, arcadeRecords: { ...data.arcadeRecords, [key]: value } });
+  },
+  backupSnapshot() {
+    if (!data) throw new Error("Les données locales sont illisibles.");
+    if (localStorage.getItem(STORAGE_KEY) !== observedRaw) throw new Error("Les données ont changé dans un autre onglet. Recharge la page après avoir copié tes modifications.");
+    const backup = JSON.parse(JSON.stringify({ format: "ping-points-backup", version: 1, data }));
+    PingBackup.validateBackup(backup);
+    return { backup, raw: observedRaw };
+  },
+  restoreCloudBackup(backup, expectedRaw) {
+    const restored = PingBackup.validateBackup(backup);
+    if (expectedRaw !== observedRaw) throw new Error("Les données locales ont changé depuis l’aperçu. Recommence la restauration.");
+    if (!save(restored)) return false;
+    render(true);
+    window.dispatchEvent(new Event("ping-data-restored"));
+    return true;
   }
 };
 

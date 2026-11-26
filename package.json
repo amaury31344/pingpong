@@ -1,0 +1,15 @@
+{
+  "name": "ping-points",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build:cloud": "esbuild cloud-client-entry.js --bundle --format=iife --global-name=PingSupabase --minify --outfile=cloud-client.bundle.js",
+    "test": "node --test *.test.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.119.2"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

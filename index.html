@@ -15,6 +15,8 @@
   <script defer src="sports.js"></script>
   <script defer src="backup.js"></script>
   <script defer src="app.js"></script>
+  <script defer src="cloud-client.bundle.js"></script>
+  <script defer src="cloud.js"></script>
   <script defer src="arcade-engine.js"></script>
   <script defer src="arcade.js"></script>
 </head>
@@ -118,6 +120,23 @@
           </form>
         </article>
         <article class="panel profile-panel backup-panel"><h3>Sauvegarde de cet appareil</h3><p class="form-help">Exporte ton profil, tes matchs, ton répertoire et tes records dans un fichier personnel. La restauration remplace les données actuelles après confirmation. Ce fichier peut contenir des coordonnées : conserve-le en lieu sûr.</p><div class="backup-actions"><button id="backup-export" class="btn btn-outline" type="button">Exporter ma sauvegarde</button><button id="backup-import" class="btn btn-outline" type="button">Restaurer une sauvegarde</button><input id="backup-file" type="file" accept=".json,application/json" hidden></div></article>
+        <article class="panel profile-panel backup-panel cloud-panel">
+          <h3>Compte et sauvegarde en ligne</h3>
+          <p class="form-help">Connecte-toi par e-mail pour envoyer ou récupérer une copie privée. Ce pilote est réservé aux adultes. Les données restent aussi sur cet appareil, même après déconnexion : évite un appareil partagé.</p>
+          <p class="form-help">La sauvegarde n’est pas automatique : choisis quand envoyer ou restaurer. Le lien de connexion ouvre le site en ligne.</p>
+          <p id="cloud-status" class="cloud-status" role="status" aria-live="polite">Vérification de la connexion…</p>
+          <form id="cloud-login" class="cloud-login">
+            <label for="cloud-email">Adresse e-mail</label>
+            <input id="cloud-email" type="email" autocomplete="email" required maxlength="254" placeholder="ton adresse e-mail">
+            <label class="cloud-adult"><input id="cloud-adult" type="checkbox" required> Je confirme avoir au moins 18 ans.</label>
+            <button class="btn btn-primary" type="submit">Recevoir un lien de connexion</button>
+          </form>
+          <div id="cloud-actions" class="backup-actions" hidden>
+            <button id="cloud-upload" class="btn btn-primary" type="button">Envoyer une copie en ligne</button>
+            <button id="cloud-download" class="btn btn-outline" type="button">Restaurer la copie en ligne</button>
+            <button id="cloud-logout" class="btn btn-outline" type="button">Se déconnecter</button>
+          </div>
+        </article>
       </section>
       <footer>Ping Points · Projet indépendant, non affilié à la FFTT · <a href="https://www.fftt.com/wp-content/uploads/2026/07/reglement_generaux_2026_2027.pdf" target="_blank" rel="noopener noreferrer">Barème FFTT 2026–2027</a></footer>
     </div>
