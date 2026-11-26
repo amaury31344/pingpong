@@ -274,7 +274,7 @@ function renderFilteredMatches(matches = chronological(data.matches).reverse()) 
 }
 
 function navigate() {
-  const allowed = { accueil: "Tableau de bord", matchs: "Mes matchs", joueurs: "Trouver des joueurs", amis: "Amis et messages", arcade: "Ping Arcade", profil: "Mon profil", partager: "Partager et installer" };
+  const allowed = { accueil: "Tableau de bord", matchs: "Mes matchs", joueurs: "Trouver des joueurs", amis: "Amis et messages", seances: "Séances et partenaires", arcade: "Ping Arcade", profil: "Mon profil", partager: "Partager et installer" };
   const requested = location.hash.slice(1);
   const page = Object.hasOwn(allowed, requested) ? requested : "accueil";
   document.querySelectorAll(".page").forEach(section => { section.hidden = section.id !== page; });
@@ -290,6 +290,15 @@ function navigate() {
 window.addEventListener("hashchange", navigate);
 $("#directory-search").addEventListener("input", () => { if (data) renderDirectory(); });
 ["#filter-kind", "#filter-result", "#filter-from", "#filter-to"].forEach(selector => $(selector).addEventListener("change", () => { if (data) renderFilteredMatches(); }));
+function showMatchCategory(kind) {
+  $("#filter-kind").value = kind;
+  $("#filter-result").value = "all";
+  $("#filter-from").value = "";
+  $("#filter-to").value = "";
+  if (data) renderFilteredMatches();
+}
+$("#show-friendly-matches").addEventListener("click", () => showMatchCategory("friendly"));
+$("#show-all-matches").addEventListener("click", () => showMatchCategory("all"));
 $("#goal-form").addEventListener("submit", event => {
   event.preventDefault();
   if (!data) return;

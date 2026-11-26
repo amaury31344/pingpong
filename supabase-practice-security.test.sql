@@ -33,6 +33,14 @@ begin
   if not exists (select 1 from public.ping_practice_recommendations() where user_id = a and shared_days = array[2] and same_period and same_goal and level_difference = 50 and distance_km <= 50 and score = 4) then
     raise exception 'Expected recommendation missing';
   end if;
+  if not exists (select 1 from public.ping_practice_recommendations(true) where user_id = a) then
+    raise exception 'Resume filter omitted a compatible participant';
+  end if;
+  perform public.ping_save_practice_preferences(false, false, array[2], 'evening', 'resume', 550, null, null);
+  if exists (select 1 from public.ping_list_practices(null)) or exists (select 1 from public.ping_practice_recommendations()) then
+    raise exception 'Opt-out did not take effect';
+  end if;
+  perform public.ping_save_practice_preferences(true, true, array[2,3], 'evening', 'resume', 550, 48.86, 2.36);
   perform set_config('request.jwt.claim.sub', c::text, true);
   if exists (select 1 from public.ping_practice_recommendations()) then raise exception 'Non-participant recommendations available'; end if;
   perform set_config('request.jwt.claim.sub', b::text, true);
@@ -43,6 +51,22 @@ begin
   perform set_config('request.jwt.claim.sub', a::text, true);
   perform public.ping_delete_practice(practice);
   if exists (select 1 from public.ping_list_practices(practice)) then raise exception 'Deleted practice remains visible'; end if;
+end;
+$$;
+reset role;
+insert into public.ping_practices (id, owner_id, title, starts_at, city, venue, goal, wheelchair, fee, equipment, changing, beginners)
+values ('00000000-0000-4000-8000-000000000034', '00000000-0000-4000-8000-000000000031', 'Séance passée', now() - interval '1 day', 'Paris', 'Salle', 'resume', 'unknown', 'Gratuit', 'unknown', 'unknown', 'unknown');
+set local role authenticated;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000031',true);
+do $$
+begin
+  if not exists (select 1 from public.ping_list_practices(null) where id = '00000000-0000-4000-8000-000000000034') then
+    raise exception 'Owner cannot see expired session to delete it';
+  end if;
+  if exists (select 1 from public.ping_list_practices('00000000-0000-4000-8000-000000000034')) then
+    raise exception 'Expired invitation remains accessible';
+  end if;
+  perform public.ping_delete_practice('00000000-0000-4000-8000-000000000034');
 end;
 $$;
 reset role;

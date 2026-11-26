@@ -31,6 +31,7 @@
   <script defer src="directory-core.js"></script>
   <script defer src="directory.js"></script>
   <script defer src="social.js"></script>
+  <script defer src="practice.js"></script>
   <script defer src="arcade-engine.js"></script>
   <script defer src="arcade.js"></script>
 </head>
@@ -43,6 +44,7 @@
       <a href="#matchs" class="nav-item" data-page="matchs"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span> Mes matchs</a>
       <a href="#joueurs" class="nav-item" data-page="joueurs"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v1"/></svg></span> Trouver des joueurs</a>
       <a href="#amis" class="nav-item" data-page="amis"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h6"/></svg></span> Amis et messages</a>
+      <a href="#seances" class="nav-item" data-page="seances"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h3"/></svg></span> Séances</a>
       <a href="#arcade" class="nav-item" data-page="arcade"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="5"/><path d="M7 13h4m-2-2v4m7-3h.01m2 3h.01"/></svg></span> Ping Arcade</a>
       <a href="#profil" class="nav-item" data-page="profil"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span> Mon profil</a>
       <a href="#partager" class="nav-item" data-page="partager"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="m8 11 8-5M8 13l8 5"/></svg></span> Partager et installer</a>
@@ -119,6 +121,7 @@
       <section id="matchs" class="page" hidden>
         <div class="section-title"><div><span class="eyebrow">TON HISTORIQUE</span><h2>Mes matchs</h2><p>Renseigne tes rencontres pour suivre ta progression.</p></div><button class="btn btn-primary add-match" type="button">＋ Ajouter un match</button></div>
         <div class="info-box">Pour un match officiel, saisis les points de référence de la période pour les deux joueurs et le coefficient de l’épreuve. Les matchs amicaux ne modifient pas les points.</div>
+        <div class="backup-actions"><button id="show-friendly-matches" class="btn btn-outline" type="button">Voir mes matchs amicaux</button><button id="show-all-matches" class="btn btn-outline" type="button">Voir tous mes matchs</button></div>
         <div class="filters"><label>Type<select id="filter-kind"><option value="all">Tous les matchs</option><option value="official">Compétition</option><option value="friendly">Amical</option><option value="legacy">Ancienne saisie</option></select></label><label>Résultat<select id="filter-result"><option value="all">Tous</option><option value="win">Victoires</option><option value="loss">Défaites</option></select></label><label>Du<input id="filter-from" type="date"></label><label>Au<input id="filter-to" type="date"></label><p id="filter-summary" aria-live="polite"></p><p id="filter-levels"></p></div>
         <article class="panel"><div id="all-matches"></div></article>
         <article class="panel feature-panel">
@@ -184,6 +187,44 @@
           <div id="chat-messages" class="chat-messages" aria-live="polite"></div>
           <form id="chat-form"><label for="chat-body">Message</label><textarea id="chat-body" maxlength="2000" rows="3" required placeholder="Écris ton message"></textarea><div class="backup-actions"><button class="btn btn-primary" type="submit">Envoyer</button><button id="chat-refresh" class="btn btn-outline" type="button">Actualiser la discussion</button></div></form>
         </article>
+      </section>
+
+      <section id="seances" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">JOUER ENSEMBLE</span><h2>Séances et partenaires</h2><p>Trouve des joueurs et propose une séance.</p></div></div>
+        <div class="info-box">Pilote réservé aux adultes déclarés. La liste des demandes est visible uniquement si tu actives les alertes dans l’application ; il n’y a pas de notification push ou d’e-mail. Ne publie pas de coordonnées privées. Les informations d’une séance peuvent être copiées ou retransmises.</div>
+        <article class="panel directory"><h3>Mes préférences</h3>
+          <p class="form-help">Les recommandations sont facultatives. Si tu les actives, les joueurs inscrits peuvent voir ton nom partagé, les jours et la période en commun, l’écart de niveau, l’objectif commun et une distance approximative. Ta position arrondie est stockée sur Supabase, mais ses coordonnées ne sont pas directement affichées aux autres. Une distance peut permettre de déduire une zone ; ne l’active pas si cela te gêne.</p>
+          <p id="practice-status" class="cloud-status" role="status" aria-live="polite">Connecte-toi depuis Mon profil.</p>
+          <form id="practice-preferences" class="form-grid">
+            <label class="feature-check wide"><input name="discoverable" type="checkbox"> Participer aux recommandations de partenaires</label>
+            <label class="feature-check wide"><input name="alerts" type="checkbox"> Voir les alertes de séances dans l’application</label>
+            <fieldset class="wide practice-days"><legend>Jours disponibles</legend>
+              <label><input type="checkbox" name="days" value="1"> Lun.</label><label><input type="checkbox" name="days" value="2"> Mar.</label><label><input type="checkbox" name="days" value="3"> Mer.</label><label><input type="checkbox" name="days" value="4"> Jeu.</label><label><input type="checkbox" name="days" value="5"> Ven.</label><label><input type="checkbox" name="days" value="6"> Sam.</label><label><input type="checkbox" name="days" value="7"> Dim.</label>
+            </fieldset>
+            <label>Période habituelle<select name="period"><option value="">Non renseignée</option><option value="morning">Matin</option><option value="afternoon">Après-midi</option><option value="evening">Soir</option></select></label>
+            <label>Objectif<select name="goal"><option value="">Non renseigné</option><option value="training">Entraînement</option><option value="competition">Compétition</option><option value="resume">Reprise tranquille</option><option value="leisure">Loisir</option></select></label>
+            <label>Niveau estimé en points <span>facultatif</span><input name="level" type="number" min="0" max="5000" step="0.01" placeholder="Ex. 500"></label>
+            <div class="wide"><div class="backup-actions"><button id="practice-location" class="btn btn-outline" type="button">Utiliser ma position approximative</button><button id="practice-location-clear" class="btn btn-outline" type="button">Effacer ma position</button></div><p id="practice-location-status" class="form-help">Aucune position choisie.</p></div>
+            <div class="wide"><button class="btn btn-primary" type="submit">Enregistrer mes choix</button></div>
+          </form>
+        </article>
+        <article class="panel directory feature-panel"><h3>Partenaires compatibles</h3><p class="form-help">Les critères communs sont expliqués, sans garantie de disponibilité. La proximité est approximative ; une donnée absente ne compte pas comme un accord.</p><label class="feature-check"><input id="practice-resume-only" type="checkbox"> Uniquement les joueurs en reprise tranquille</label><div class="backup-actions"><button id="practice-recommend" class="btn btn-outline" type="button">Actualiser les suggestions</button></div><div id="practice-recommendations"></div></article>
+        <article class="panel directory feature-panel"><h3>Il nous manque un joueur</h3><p class="form-help">Publier une séance la rend visible aux comptes ayant activé les alertes dans l’application. Toute personne connectée ayant son lien pourra aussi la consulter et le partager. Publie uniquement un lieu que tu acceptes de partager, jamais de numéro ni d’e-mail. Pour échanger, utilise les demandes d’amis et la messagerie.</p>
+          <form id="practice-create" class="form-grid">
+            <label>Titre<input name="title" minlength="2" maxlength="100" required placeholder="Il nous manque un joueur"></label>
+            <label>Date et heure locales<input name="starts" type="datetime-local" required></label>
+            <label>Ville<input name="city" minlength="2" maxlength="100" required></label>
+            <label>Lieu partagé<input name="venue" minlength="2" maxlength="150" required placeholder="Nom de la salle"></label>
+            <label>Objectif<select name="goal"><option value="training">Entraînement</option><option value="competition">Compétition</option><option value="resume">Reprise tranquille</option><option value="leisure">Loisir</option></select></label>
+            <label>Tarif<input name="fee" maxlength="80" required placeholder="Gratuit, 5 €, inconnu…"></label>
+            <label>Accès fauteuil<select name="wheelchair"><option value="unknown">À confirmer</option><option value="yes">Oui</option><option value="no">Non</option></select></label>
+            <label>Prêt de raquette<select name="equipment"><option value="unknown">À confirmer</option><option value="yes">Oui</option><option value="no">Non</option></select></label>
+            <label>Vestiaires<select name="changing"><option value="unknown">À confirmer</option><option value="yes">Oui</option><option value="no">Non</option></select></label>
+            <label>Débutants accueillis<select name="beginners"><option value="unknown">À confirmer</option><option value="yes">Oui</option><option value="no">Non</option></select></label>
+            <div class="wide"><button class="btn btn-primary" type="submit">Vérifier et publier</button></div>
+          </form>
+        </article>
+        <article class="panel directory feature-panel"><h3>Séances et invitations</h3><p class="form-help">Les alertes sont affichées ici, sans notification, jusqu’à 50 séances. Tes séances apparaissent en premier, y compris les séances passées pour que tu puisses les supprimer. Un lien d’invitation fonctionne pour les personnes connectées jusqu’à suppression de la séance ou sa date de début. Si tu n’es pas connecté, connecte-toi puis rouvre le lien.</p><div class="backup-actions"><button id="practice-refresh" class="btn btn-outline" type="button">Actualiser</button></div><div id="practice-list"></div><label for="practice-link">Lien d’invitation sélectionné</label><input id="practice-link" type="url" readonly placeholder="Sélectionne une séance"><div class="backup-actions"><button id="practice-copy" class="btn btn-outline" type="button">Copier le lien</button></div></article>
       </section>
 
       <section id="arcade" class="page" hidden>

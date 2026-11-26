@@ -151,7 +151,7 @@ begin
 end;
 $$;
 
-create function public.ping_list_practices(p_id uuid default null)
+create or replace function public.ping_list_practices(p_id uuid default null)
 returns table(id uuid, owner_id uuid, display_name text, title text, starts_at timestamptz, city text, venue text,
   goal text, wheelchair text, fee text, equipment text, changing text, beginners text)
 language plpgsql security definer set search_path = pg_catalog, public
@@ -161,13 +161,13 @@ begin
   return query select s.id, s.owner_id, coalesce(d.display_name, 'Profil privé'), s.title, s.starts_at, s.city, s.venue,
     s.goal, s.wheelchair, s.fee, s.equipment, s.changing, s.beginners
     from public.ping_practices s left join public.ping_directory d on d.owner_id = s.owner_id and d.published
-    where s.starts_at > now()
+    where (s.starts_at > now() or (s.owner_id = auth.uid() and p_id is null))
       and (d.published or s.owner_id = auth.uid())
       and (s.owner_id = auth.uid() or (p_id is not null and s.id = p_id)
         or (p_id is null and exists (select 1 from public.ping_practice_preferences p where p.owner_id = auth.uid() and p.alerts)))
       and (p_id is null or s.id = p_id)
       and not exists (select 1 from public.ping_blocks b where (b.blocker = auth.uid() and b.blocked = s.owner_id) or (b.blocker = s.owner_id and b.blocked = auth.uid()))
-    order by s.starts_at limit 50;
+    order by (s.owner_id = auth.uid()) desc, (s.starts_at > now()) desc, s.starts_at limit 50;
 end;
 $$;
 
