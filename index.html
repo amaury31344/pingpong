@@ -29,6 +29,7 @@
   <script defer src="profile-photo.js"></script>
   <script defer src="backup.js"></script>
   <script defer src="app.js"></script>
+  <script defer src="suggestions.js"></script>
   <script defer src="share.js"></script>
   <script defer src="cloud-client.bundle.js"></script>
   <script defer src="cloud.js"></script>
@@ -167,7 +168,7 @@
           <div id="directory-own-profile"></div>
           <form id="directory-publish" class="form-grid">
             <label>Nom public ou pseudonyme<input name="name" minlength="2" maxlength="80" required placeholder="Nom à afficher"></label>
-            <label>Club à partager <span>facultatif</span><input name="club" maxlength="100" placeholder="Laisser vide pour ne pas partager"></label>
+            <div class="suggestion-field"><label for="directory-club">Club à partager <span>facultatif</span><input id="directory-club" name="club" maxlength="100" placeholder="Laisser vide pour ne pas partager" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="directory-club-options" aria-describedby="directory-club-status" autocomplete="off"></label><ul id="directory-club-options" class="suggestion-list" role="listbox" hidden></ul><p id="directory-club-status" class="form-help" role="status" aria-live="polite">Pour les suggestions, renseigne ta ville dans Mon profil : elle sera transmise aux services publics. Saisie libre possible.</p></div>
             <label class="feature-check"><input name="points" type="checkbox"> Partager mes points estimés</label>
             <label class="feature-check"><input name="stats" type="checkbox"> Partager mon nombre de matchs et mes victoires</label>
             <label class="feature-check wide"><input name="matches" type="checkbox"> Partager les dates, types et résultats de mes 10 derniers matchs</label>
@@ -214,11 +215,11 @@
           </form>
         </article>
         <article class="panel directory feature-panel"><h3>Partenaires compatibles</h3><p class="form-help">Les critères communs sont expliqués, sans garantie de disponibilité. La proximité est approximative ; une donnée absente ne compte pas comme un accord.</p><label class="feature-check"><input id="practice-resume-only" type="checkbox"> Uniquement les joueurs en reprise tranquille</label><div class="backup-actions"><button id="practice-recommend" class="btn btn-outline" type="button">Actualiser les suggestions</button></div><div id="practice-recommendations"></div></article>
-        <article class="panel directory feature-panel"><h3>Il nous manque un joueur</h3><p class="form-help">Publier une séance la rend visible aux comptes ayant activé les alertes dans l’application. Toute personne connectée ayant son lien pourra aussi la consulter et le partager. Publie uniquement un lieu que tu acceptes de partager, jamais de numéro ni d’e-mail. Pour échanger, utilise les demandes d’amis et la messagerie.</p>
+        <article class="panel directory feature-panel"><h3>Il nous manque un joueur</h3><p class="form-help">Publier une séance la rend visible aux comptes ayant activé les alertes dans l’application. Toute personne connectée ayant son lien pourra aussi la consulter et le partager. Publie uniquement un lieu que tu acceptes de partager, jamais de numéro ni d’e-mail. Pour échanger, utilise les demandes d’amis et la messagerie. La ville saisie est transmise au service public de suggestions ; la saisie libre reste possible.</p>
           <form id="practice-create" class="form-grid">
             <label>Titre<input name="title" minlength="2" maxlength="100" required placeholder="Il nous manque un joueur"></label>
             <label>Date et heure locales<input name="starts" type="datetime-local" required></label>
-            <label>Ville<input name="city" minlength="2" maxlength="100" required></label>
+            <div class="suggestion-field"><label for="practice-city">Ville<input id="practice-city" name="city" minlength="2" maxlength="100" required role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="practice-city-options" aria-describedby="practice-city-status" autocomplete="off"></label><ul id="practice-city-options" class="suggestion-list" role="listbox" hidden></ul><p id="practice-city-status" class="form-help" role="status" aria-live="polite">Saisis au moins 2 caractères ou un code postal.</p></div>
             <label>Lieu partagé<input name="venue" minlength="2" maxlength="150" required placeholder="Nom de la salle"></label>
             <label>Places pour d’autres joueurs<input name="capacity" type="number" min="1" max="30" step="1" value="1" required></label>
             <label>Objectif<select name="goal"><option value="training">Entraînement</option><option value="competition">Compétition</option><option value="resume">Reprise tranquille</option><option value="leisure">Loisir</option></select></label>
@@ -303,8 +304,9 @@
             <label>Prénom<input name="firstName" required maxlength="80" autocomplete="given-name" placeholder="Ton prénom"></label>
             <label>Nom<input name="lastName" required maxlength="80" autocomplete="family-name" placeholder="Ton nom"></label>
             <label>Numéro de licence <span>facultatif</span><input name="license" maxlength="30" placeholder="Ton numéro FFTT"></label>
-            <label>Club <span>facultatif</span><input name="club" maxlength="100" placeholder="Ton club"></label>
-            <label>Ville <span>facultatif</span><input name="city" maxlength="100" autocomplete="address-level2" placeholder="Ta ville"></label>
+            <div class="suggestion-field"><label for="profile-city">Ville <span>facultatif</span><input id="profile-city" name="city" maxlength="100" autocomplete="off" placeholder="Ta ville" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="profile-city-options" aria-describedby="profile-city-status"></label><ul id="profile-city-options" class="suggestion-list" role="listbox" hidden></ul><p id="profile-city-status" class="form-help" role="status" aria-live="polite">Saisis au moins 2 caractères ou un code postal.</p></div>
+            <div class="suggestion-field"><label for="profile-club">Club <span>facultatif</span><input id="profile-club" name="club" maxlength="100" placeholder="Ton club" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="profile-club-options" aria-describedby="profile-club-status" autocomplete="off"></label><ul id="profile-club-options" class="suggestion-list" role="listbox" hidden></ul><p id="profile-club-status" class="form-help" role="status" aria-live="polite">Choisis d’abord une ville pour suggérer des clubs.</p></div>
+            <p class="form-help wide">Les suggestions utilisent les services publics français : la ville saisie leur est transmise. Les clubs proposés sont des associations dont le nom contient « tennis de table » ou « ping-pong », pas une liste officielle FFTT. Tu peux toujours saisir librement.</p>
             <div class="points-field"><label for="starting-points">Points au début de la saison</label><div class="points-stepper"><button id="points-decrease" type="button" aria-label="Diminuer les points de 1">−</button><input id="starting-points" name="startingPoints" type="number" step="0.01" min="0" max="5000" value="500" required><button id="points-increase" type="button" aria-label="Augmenter les points de 1">+</button></div></div>
             <label class="wide">Bio <span>facultative</span><textarea name="bio" maxlength="300" rows="3" placeholder="Quelques mots sur toi et ton parcours"></textarea></label>
             <p class="form-help wide">Ta bio et ta photo restent privées tant que tu ne les publies pas depuis Trouver des joueurs. Elles sont incluses si tu exportes ou envoies manuellement ta sauvegarde.</p>
@@ -369,8 +371,9 @@
     <div class="dialog-heading"><div><span class="eyebrow">TON RÉPERTOIRE</span><h2>Ajouter un joueur</h2></div><button type="button" class="close-dialog" aria-label="Fermer">×</button></div>
     <div class="form-grid">
       <label>Nom et prénom<input name="name" required maxlength="120" placeholder="Nom du joueur"></label>
-      <label>Ville<input name="city" required maxlength="100" placeholder="Sa ville"></label>
-      <label>Club <span>facultatif</span><input name="club" maxlength="100" placeholder="Son club"></label>
+      <div class="suggestion-field"><label for="player-city">Ville<input id="player-city" name="city" required maxlength="100" placeholder="Sa ville" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="player-city-options" aria-describedby="player-city-status" autocomplete="off"></label><ul id="player-city-options" class="suggestion-list" role="listbox" hidden></ul><p id="player-city-status" class="form-help" role="status" aria-live="polite">Saisis au moins 2 caractères ou un code postal.</p></div>
+      <div class="suggestion-field"><label for="player-club">Club <span>facultatif</span><input id="player-club" name="club" maxlength="100" placeholder="Son club" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="player-club-options" aria-describedby="player-club-status" autocomplete="off"></label><ul id="player-club-options" class="suggestion-list" role="listbox" hidden></ul><p id="player-club-status" class="form-help" role="status" aria-live="polite">Choisis d’abord une ville pour suggérer des clubs.</p></div>
+      <p class="form-help wide">La ville saisie est transmise aux services publics français pour les suggestions. Les associations proposées ne constituent pas une liste officielle FFTT ; la saisie libre reste possible.</p>
       <label>Contact <span>facultatif</span><input name="contact" maxlength="120" placeholder="Ex. e-mail communiqué"></label>
       <p class="form-help wide">N’ajoute des coordonnées qu’avec l’accord de la personne. Elles restent sur cet appareil.</p>
       <div class="wide"><button class="btn btn-primary full" type="submit">Ajouter au répertoire</button></div>
