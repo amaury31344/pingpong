@@ -32,6 +32,7 @@
   <script defer src="share.js"></script>
   <script defer src="cloud-client.bundle.js"></script>
   <script defer src="cloud.js"></script>
+  <script defer src="notifications.js"></script>
   <script defer src="directory-core.js"></script>
   <script defer src="directory.js"></script>
   <script defer src="social.js"></script>
@@ -229,7 +230,7 @@
             <div class="wide"><button class="btn btn-primary" type="submit">Vérifier et publier</button></div>
           </form>
         </article>
-        <article class="panel directory feature-panel"><h3>Séances et invitations</h3><p class="form-help">Les alertes sont affichées ici, sans notification, jusqu’à 50 séances. Les places indiquées excluent l’organisateur. Tu peux participer ou annuler avant la séance ; l’application affiche le nombre de participants, sans leurs noms. Tes séances apparaissent en premier, y compris les séances passées pour que tu puisses les supprimer. Un lien d’invitation fonctionne pour les personnes connectées jusqu’à suppression de la séance ou sa date de début. Si tu n’es pas connecté, connecte-toi puis rouvre le lien.</p><div class="backup-actions"><button id="practice-refresh" class="btn btn-outline" type="button">Actualiser</button></div><div id="practice-list"></div><label for="practice-link">Lien d’invitation sélectionné</label><input id="practice-link" type="url" readonly placeholder="Sélectionne une séance"><div class="backup-actions"><button id="practice-copy" class="btn btn-outline" type="button">Copier le lien</button></div></article>
+        <article class="panel directory feature-panel"><h3>Séances et invitations</h3><p class="form-help">Les alertes sont affichées ici, jusqu’à 50 séances. Les notifications facultatives peuvent être activées dans Mon profil pendant que la page reste ouverte. Les places indiquées excluent l’organisateur. Tu peux participer ou annuler avant la séance ; l’application affiche le nombre de participants, sans leurs noms. Tes séances apparaissent en premier, y compris les séances passées pour que tu puisses les supprimer. Un lien d’invitation fonctionne pour les personnes connectées jusqu’à suppression de la séance ou sa date de début. Si tu n’es pas connecté, connecte-toi puis rouvre le lien.</p><div class="backup-actions"><button id="practice-refresh" class="btn btn-outline" type="button">Actualiser</button></div><div id="practice-list"></div><label for="practice-link">Lien d’invitation sélectionné</label><input id="practice-link" type="url" readonly placeholder="Sélectionne une séance"><div class="backup-actions"><button id="practice-copy" class="btn btn-outline" type="button">Copier le lien</button></div></article>
       </section>
 
       <section id="arcade" class="page" hidden>
@@ -317,6 +318,8 @@
           <p class="form-help">Connecte-toi par e-mail pour envoyer ou récupérer une copie privée. Ce pilote est réservé aux adultes. Les données restent aussi sur cet appareil, même après déconnexion : évite un appareil partagé.</p>
           <p class="form-help">La sauvegarde n’est pas automatique. Pour passer sur un autre appareil, envoie d’abord une copie depuis l’appareil qui possède les dernières données, puis connecte-toi et restaure-la sur l’autre appareil. Compare les copies avant de choisir : la restauration remplace les données locales. Le lien de connexion ouvre le site en ligne.</p>
           <p id="cloud-status" class="cloud-status" role="status" aria-live="polite">Vérification de la connexion…</p>
+          <p class="form-help">Les notifications de messages et de nouvelles séances sont facultatives et fonctionnent seulement tant que cette page reste ouverte et active ; elles ne sont pas des notifications push. Les alertes de séances doivent aussi être activées dans Séances.</p>
+          <p id="notification-status" class="form-help" role="status" aria-live="polite">Connecte-toi pour activer les notifications.</p>
           <form id="cloud-login" class="cloud-login">
             <label for="cloud-email">Adresse e-mail</label>
             <input id="cloud-email" type="email" autocomplete="email" required maxlength="254" placeholder="ton adresse e-mail">
@@ -328,6 +331,8 @@
             <button id="cloud-upload" class="btn btn-primary" type="button">Envoyer une copie en ligne</button>
             <button id="cloud-download" class="btn btn-outline" type="button">Restaurer la copie en ligne</button>
             <button id="cloud-logout" class="btn btn-outline" type="button">Se déconnecter</button>
+            <button id="cloud-delete" class="btn btn-outline" type="button">Supprimer mon compte</button>
+            <button id="notification-toggle" class="btn btn-outline" type="button" disabled>Activer les notifications</button>
           </div>
         </article>
       </section>

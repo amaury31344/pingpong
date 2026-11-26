@@ -84,7 +84,7 @@
         options: { emailRedirectTo: redirectUrl, shouldCreateUser: true }
       });
       if (error) throw error;
-      message("Consulte ton e-mail et ouvre le lien de connexion sur cet appareil.");
+      message("Si l’e-mail est délivré, ouvre son lien sur cet appareil. L’envoi dépend de la configuration du service de messagerie.");
     });
   });
 
@@ -137,5 +137,21 @@
     const { error } = await client.auth.signOut();
     if (error) throw error;
     message("Déconnecté. Les données locales restent sur cet appareil.");
+  }));
+
+  $("#cloud-delete").addEventListener("click", () => perform(async () => {
+    const id = userId();
+    const warning = "Supprimer définitivement ton compte et ses données en ligne : sauvegarde, profil partagé, séances, inscriptions, relations, messages et signalements liés ? Les conversations supprimées disparaîtront aussi pour tes amis. Les données locales et les copies externes resteront sur les appareils. Cette action est irréversible. Une connexion de moins de 15 minutes est nécessaire.";
+    if (!confirm(warning)) return;
+    if (prompt("Pour confirmer, écris SUPPRIMER :") !== "SUPPRIMER") {
+      message("Suppression annulée.");
+      return;
+    }
+    assertSameUser(id);
+    const { error } = await client.rpc("ping_delete_own_account");
+    if (error) throw error;
+    const { error: signOutError } = await client.auth.signOut({ scope: "local" });
+    if (signOutError) throw new Error(`Compte supprimé, mais la déconnexion locale a échoué : ${signOutError.message}`);
+    message("Compte et données en ligne supprimés. Les données locales restent sur cet appareil.");
   }));
 })();

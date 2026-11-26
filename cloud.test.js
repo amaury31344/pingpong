@@ -14,20 +14,20 @@ const backup = {
 
 function setup() {
   const elements = new Map();
-  for (const id of ["cloud-login", "cloud-actions", "cloud-status", "cloud-email", "cloud-compare", "cloud-upload", "cloud-download", "cloud-logout"]) {
+  for (const id of ["cloud-login", "cloud-actions", "cloud-status", "cloud-email", "cloud-compare", "cloud-upload", "cloud-download", "cloud-logout", "cloud-delete"]) {
     elements.set(`#${id}`, {
       hidden: false, disabled: false, value: "", textContent: "",
       classList: { toggle() {} },
       addEventListener(type, handler) { this[type] = handler; }
     });
   }
-  const state = { remote: null, raw: "original", calls: [], confirmed: true, restored: 0, reads: 0 };
+  const state = { remote: null, raw: "original", calls: [], confirmed: true, confirmationText: "SUPPRIMER", restored: 0, reads: 0 };
   let authChange;
   const client = {
     auth: {
       onAuthStateChange(callback) { authChange = callback; },
       async signInWithOtp(options) { state.calls.push(["login", options]); return { error: null }; },
-      async signOut() { authChange("SIGNED_OUT", null); return { error: null }; }
+      async signOut(options) { state.signOutOptions = options; authChange("SIGNED_OUT", null); return { error: null }; }
     },
     from() {
       return { select() { return { eq(_key, id) { state.queryUser = id; return {
@@ -58,7 +58,8 @@ function setup() {
     },
     window: { dispatchEvent() {} },
     Event: class { constructor(type) { this.type = type; } },
-    confirm() { return state.confirmed; }
+    confirm() { return state.confirmed; },
+    prompt() { return state.confirmationText; }
   };
   vm.runInNewContext(source, context);
   return {
@@ -145,4 +146,17 @@ test("comparer les copies n’écrase aucune donnée", async () => {
   assert.equal(t.state.calls.length, 0);
   assert.equal(t.state.restored, 0);
   assert.match(t.elements.get("#cloud-status").textContent, /aucun changement/i);
+});
+
+test("la suppression exige les deux confirmations et déconnecte localement", async () => {
+  const t = setup();
+  t.login();
+  t.state.confirmationText = "NON";
+  await t.click("cloud-delete");
+  assert.equal(t.state.calls.length, 0);
+  t.state.confirmationText = "SUPPRIMER";
+  await t.click("cloud-delete");
+  assert.equal(t.state.calls[0][0], "ping_delete_own_account");
+  assert.equal(t.state.signOutOptions.scope, "local");
+  assert.match(t.elements.get("#cloud-status").textContent, /données locales restent/i);
 });
