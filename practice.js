@@ -71,6 +71,18 @@
       const actions = document.createElement("div");
       actions.className = "backup-actions";
       actions.append(button("Obtenir le lien", () => { $("#practice-link").value = invitation(row.id); $("#practice-link").focus(); $("#practice-link").select(); }));
+      actions.append(button("Ajouter au calendrier", () => {
+        try {
+          const file = new Blob([PingCalendar.event(row)], { type: "text/calendar;charset=utf-8" });
+          const url = URL.createObjectURL(file);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = "ping-points-seance.ics";
+          link.click();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          say("Fichier calendrier téléchargé. Ajuste la durée dans ton calendrier.");
+        } catch (error) { say(`Export impossible : ${error.message}`, true); }
+      }));
       if (row.owner_id === ownId) actions.append(button("Supprimer", () => {
         if (!confirm("Supprimer cette séance et invalider son lien ?")) return;
         perform(async (id, generation) => {
@@ -108,6 +120,12 @@
     const combined = [...invited, ...rows.filter(row => !invited.some(item => item.id === row.id))];
     const availability = combined.length ? await rpc("ping_practice_availability", { p_ids: combined.map(row => row.id) }) : [];
     if (!current(id, generation)) return;
+    const joined = new Map(availability.map(item => [item.id, item]));
+    const next = combined.filter(row => (row.owner_id === id || joined.get(row.id)?.joined) && new Date(row.starts_at) > new Date())
+      .sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at))[0];
+    $("#home-next-practice").textContent = next
+      ? `${next.title} · ${new Date(next.starts_at).toLocaleString("fr-FR")} · ${next.city} (parmi les séances affichées)`
+      : "Aucune séance à venir parmi les séances affichées.";
     list.replaceChildren();
     if (invite && !invited.length) line(list, "Invitation introuvable, expirée ou indisponible.");
     renderSessions(combined, new Map(availability.map(item => [item.id, item])), id, "Aucune séance à afficher. Active les alertes pour voir les demandes.");
@@ -141,6 +159,7 @@
     list.replaceChildren();
     recommendations.replaceChildren();
     $("#practice-link").value = "";
+    $("#home-next-practice").textContent = id ? "Chargement de tes séances…" : "Connecte-toi pour voir tes séances.";
     locationStatus();
     availability();
     if (!id) { say("Connecte-toi depuis Mon profil pour utiliser les séances."); return; }

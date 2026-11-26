@@ -86,6 +86,7 @@ function save(next) {
     localStorage.setItem(STORAGE_KEY, raw);
     observedRaw = raw;
     data = next;
+    window.dispatchEvent(new Event("ping-local-saved"));
     return true;
   } catch (error) {
     showNotice(`Enregistrement impossible : ${error.message}`, true);
@@ -108,7 +109,7 @@ function table(matches, deletable) {
     const isWin = match.result === "win";
     const type = match.kind === "friendly" ? "Amical" : match.kind === "legacy" ? "Ancienne saisie" : "Compétition";
     const details = [match.notes ? `Notes : ${match.notes}` : "", match.strength ? `Point fort : ${match.strength}` : "", match.improvement ? `Axe de travail : ${match.improvement}` : ""].filter(Boolean).join("\n");
-    return `<tr><td>${escapeHtml(dateLabel(match.date))}</td><td><strong>${escapeHtml(match.opponent)}</strong>${details ? `<details class="match-notes"><summary>Voir mon bilan</summary><p>${escapeHtml(details)}</p></details>` : ""}</td><td><span class="result-label ${isWin ? "win" : "loss"}">${isWin ? "Victoire" : "Défaite"}</span>${match.score ? ` · ${escapeHtml(match.score)}` : ""}</td><td>${type}</td><td>${match.kind === "friendly" ? "—" : `${signed(match.delta)} pts`}</td>${deletable ? `<td><button type="button" class="delete-btn" data-edit-match="${escapeHtml(match.id)}">Modifier</button> <button type="button" class="delete-btn" data-delete-match="${escapeHtml(match.id)}">Supprimer</button></td>` : ""}</tr>`;
+    return `<tr><td data-label="Date">${escapeHtml(dateLabel(match.date))}</td><td data-label="Adversaire"><strong>${escapeHtml(match.opponent)}</strong>${details ? `<details class="match-notes"><summary>Voir mon bilan</summary><p>${escapeHtml(details)}</p></details>` : ""}</td><td data-label="Résultat"><span class="result-label ${isWin ? "win" : "loss"}">${isWin ? "Victoire" : "Défaite"}</span>${match.score ? ` · ${escapeHtml(match.score)}` : ""}</td><td data-label="Type">${type}</td><td data-label="Variation">${match.kind === "friendly" ? "—" : `${signed(match.delta)} pts`}</td>${deletable ? `<td><button type="button" class="delete-btn" data-edit-match="${escapeHtml(match.id)}">Modifier</button> <button type="button" class="delete-btn" data-delete-match="${escapeHtml(match.id)}">Supprimer</button></td>` : ""}</tr>`;
   }).join("")}</tbody></table></div>`;
 }
 
@@ -284,10 +285,23 @@ function navigate() {
     if (active) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
+  document.querySelectorAll("[data-mobile-page]").forEach(link => {
+    if (link.dataset.mobilePage === page) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
+  });
+  $("#mobile-more").open = false;
   $("#page-title").textContent = allowed[page];
 }
 
 window.addEventListener("hashchange", navigate);
+document.addEventListener("click", event => {
+  const menu = $("#mobile-more");
+  if (menu.open && !menu.contains(event.target)) menu.open = false;
+});
+document.addEventListener("keydown", event => {
+  const menu = $("#mobile-more");
+  if (event.key === "Escape" && menu.open) { menu.open = false; menu.querySelector("summary").focus(); }
+});
 $("#directory-search").addEventListener("input", () => { if (data) renderDirectory(); });
 ["#filter-kind", "#filter-result", "#filter-from", "#filter-to"].forEach(selector => $(selector).addEventListener("change", () => { if (data) renderFilteredMatches(); }));
 function showMatchCategory(kind) {
@@ -447,7 +461,11 @@ $("#profile-photo-remove").addEventListener("click", () => {
   $("#profile-photo-file").value = "";
   renderPhotoPreview();
   $("#profile-photo-status").textContent = "Photo retirée de l’aperçu. Enregistre ton profil pour confirmer.";
+  $("#profile-draft-status").textContent = "Modifications du profil non enregistrées sur cet appareil.";
 });
+$("#profile-form").addEventListener("input", () => { $("#profile-draft-status").textContent = "Modifications du profil non enregistrées sur cet appareil."; });
+$("#profile-form").addEventListener("change", () => { $("#profile-draft-status").textContent = "Modifications du profil non enregistrées sur cet appareil."; });
+$("#profile-form").addEventListener("reset", () => { $("#profile-draft-status").textContent = "Aucune modification du profil en cours."; });
 $("#profile-form").addEventListener("submit", event => {
   event.preventDefault();
   if (!data) return showNotice("Corrige les données enregistrées avant de modifier le profil.", true);
@@ -456,7 +474,10 @@ $("#profile-form").addEventListener("submit", event => {
   const firstName = form.get("firstName").trim(), lastName = form.get("lastName").trim();
   if (!firstName || !lastName) return showNotice("Indique ton prénom et ton nom.", true);
   const profile = { firstName, lastName, license: form.get("license").trim(), club: form.get("club").trim(), city: form.get("city").trim(), startingPoints: Number(form.get("startingPoints")), bio: form.get("bio").trim(), photo: pendingPhoto };
-  if (save({ ...data, profile })) { render(); showNotice("Ton profil a été enregistré sur cet appareil."); }
+  if (save({ ...data, profile })) {
+    $("#profile-draft-status").textContent = "Profil enregistré sur cet appareil. La copie en ligne reste manuelle.";
+    render(); showNotice("Ton profil a été enregistré sur cet appareil.");
+  }
 });
 
 function openMatch(match = null) {
@@ -465,6 +486,20 @@ function openMatch(match = null) {
   const form = $("#match-form");
   form.querySelector(".dialog-alert")?.remove();
   form.reset();
+  const names = [...new Set([...data.players.map(player => player.name), ...data.matches.map(item => item.opponent)])].sort((a, b) => a.localeCompare(b, "fr"));
+  $("#match-opponents").replaceChildren(...names.map(name => {
+    const option = document.createElement("option");
+    option.value = name;
+    return option;
+  }));
+  const last = data.matches.at(-1);
+  if (!match && last && ["official", "friendly"].includes(last.kind)) {
+    form.elements.kind.value = last.kind;
+    if (last.kind === "official") {
+      form.elements.playerReference.value = last.playerReference ?? "";
+      form.elements.coefficient.value = last.coefficient ?? "1";
+    }
+  }
   form.elements.kind.querySelector('[value="legacy"]').hidden = match?.kind !== "legacy";
   $("#match-dialog-title").textContent = match ? "Modifier le match" : "Ajouter un match";
   const now = new Date();

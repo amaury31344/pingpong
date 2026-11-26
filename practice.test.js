@@ -23,7 +23,7 @@ class Element {
   querySelectorAll() { return []; }
 }
 function setup() {
-  const ids = ["practice-preferences", "practice-create", "practice-status", "practice-list", "practice-recommendations", "practice-location", "practice-location-clear", "practice-recommend", "practice-refresh", "practice-copy", "practice-location-status", "practice-link", "practice-resume-only"];
+  const ids = ["practice-preferences", "practice-create", "practice-status", "practice-list", "practice-recommendations", "practice-location", "practice-location-clear", "practice-recommend", "practice-refresh", "practice-copy", "practice-location-status", "practice-link", "practice-resume-only", "home-next-practice"];
   const elements = Object.fromEntries(ids.map(id => [`#${id}`, new Element()]));
   const fields = {
     title: "Test", starts: "2030-01-02T18:00", city: "Lille", venue: "Salle", goal: "resume", wheelchair: "unknown", fee: "Gratuit", equipment: "yes", changing: "unknown", beginners: "yes", capacity: "2"
@@ -99,20 +99,21 @@ test("les joueurs peuvent s’inscrire et une séance complète désactive l’i
   await settle();
   let card = t.elements["#practice-list"].children[0];
   assert.match(card.children[4].textContent, /1 \/ 1/);
-  card.children[5].children[1].handlers.click();
+  card.children[5].children[2].handlers.click();
   await settle();
   assert.equal(t.state.calls.find(call => call.name === "ping_set_practice_attendance").args.p_join, true);
   t.state.availability = [{ id, capacity: 1, attendees: 1, joined: false }];
   t.elements["#practice-refresh"].handlers.click();
   await settle();
   card = t.elements["#practice-list"].children[0];
-  assert.equal(card.children[5].children[1].disabled, true);
+  assert.equal(card.children[5].children[2].disabled, true);
   t.state.availability = [{ id, capacity: 1, attendees: 1, joined: true }];
   t.elements["#practice-refresh"].handlers.click();
   await settle();
   card = t.elements["#practice-list"].children[0];
-  assert.equal(card.children[5].children[1].textContent, "Annuler ma participation");
-  card.children[5].children[1].handlers.click();
+  assert.equal(card.children[5].children[2].textContent, "Annuler ma participation");
+  assert.match(t.elements["#home-next-practice"].textContent, /Test.*Lille/);
+  card.children[5].children[2].handlers.click();
   await settle();
   assert.equal(t.state.calls.filter(call => call.name === "ping_set_practice_attendance").at(-1).args.p_join, false);
 });

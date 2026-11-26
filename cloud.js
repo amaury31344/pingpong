@@ -6,9 +6,28 @@
   const redirectUrl = "https://ping-points.vercel.app/";
   const $ = selector => document.querySelector(selector);
   const login = $("#cloud-login"), actions = $("#cloud-actions"), status = $("#cloud-status");
+  const backupState = $("#backup-state");
   let session = null;
+  let lastSent = null;
   let busy = false;
   let client;
+
+  function renderBackupState() {
+    if (!session) { backupState.textContent = "Copie en ligne non vérifiée : connecte-toi pour comparer."; return; }
+    if (!lastSent || lastSent.userId !== session.user.id) {
+      backupState.textContent = "État de la copie en ligne inconnu. Utilise « Comparer les copies ».";
+      return;
+    }
+    try {
+      backupState.textContent = PingApp.backupSnapshot().raw === lastSent.raw
+        ? "Copie envoyée depuis cet appareil ; elle n’a pas été vérifiée depuis."
+        : "Données locales modifiées depuis le dernier envoi. La sauvegarde en ligne est manuelle.";
+    } catch (error) {
+      backupState.textContent = `État de sauvegarde indisponible : ${error.message}`;
+    }
+  }
+  window.addEventListener("ping-local-saved", renderBackupState);
+  window.addEventListener("storage", event => { if (event.key === "ping-points-data-v2") renderBackupState(); });
 
   function message(text, error = false) {
     status.textContent = text;
@@ -70,8 +89,10 @@
 
   window.PingCloud = { client, getUserId: () => session?.user?.id ?? null };
   client.auth.onAuthStateChange((_event, nextSession) => {
+    if (session?.user?.id !== nextSession?.user?.id) lastSent = null;
     session = nextSession;
     renderSession();
+    renderBackupState();
     window.dispatchEvent(new Event("ping-cloud-session"));
   });
 
@@ -117,6 +138,8 @@
     });
     if (error) throw error;
     assertSameUser(id);
+    lastSent = { userId: id, raw: snapshot.raw };
+    renderBackupState();
     message("Copie enregistrée en ligne. Les prochaines modifications ne sont pas envoyées automatiquement.");
   }));
 

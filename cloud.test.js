@@ -14,14 +14,14 @@ const backup = {
 
 function setup() {
   const elements = new Map();
-  for (const id of ["cloud-login", "cloud-actions", "cloud-status", "cloud-email", "cloud-compare", "cloud-upload", "cloud-download", "cloud-logout", "cloud-delete"]) {
+  for (const id of ["cloud-login", "cloud-actions", "cloud-status", "backup-state", "cloud-email", "cloud-compare", "cloud-upload", "cloud-download", "cloud-logout", "cloud-delete"]) {
     elements.set(`#${id}`, {
       hidden: false, disabled: false, value: "", textContent: "",
       classList: { toggle() {} },
       addEventListener(type, handler) { this[type] = handler; }
     });
   }
-  const state = { remote: null, raw: "original", calls: [], confirmed: true, confirmationText: "SUPPRIMER", restored: 0, reads: 0 };
+  const state = { remote: null, raw: "original", calls: [], confirmed: true, confirmationText: "SUPPRIMER", restored: 0, reads: 0, listeners: {} };
   let authChange;
   const client = {
     auth: {
@@ -56,7 +56,7 @@ function setup() {
         return true;
       }
     },
-    window: { dispatchEvent() {} },
+    window: { dispatchEvent() {}, addEventListener(type, handler) { state.listeners[type] = handler; } },
     Event: class { constructor(type) { this.type = type; } },
     confirm() { return state.confirmed; },
     prompt() { return state.confirmationText; }
@@ -99,6 +99,19 @@ test("un envoi confirmé utilise la version observée et le compte connecté", a
   assert.equal(args.p_user_id, "player-a");
   assert.equal(args.p_expected_version, 3);
   assert.deepEqual(args.p_payload, backup);
+});
+
+test("l’état de sauvegarde distingue le dernier envoi des modifications locales", async () => {
+  const t = setup();
+  t.login();
+  assert.match(t.elements.get("#backup-state").textContent, /inconnu/);
+  await t.click("cloud-upload");
+  assert.match(t.elements.get("#backup-state").textContent, /Copie envoyée.*pas été vérifiée/);
+  t.state.raw = "modifié";
+  t.state.listeners["ping-local-saved"]();
+  assert.match(t.elements.get("#backup-state").textContent, /modifiées depuis le dernier envoi/);
+  t.login("player-b");
+  assert.match(t.elements.get("#backup-state").textContent, /inconnu/);
 });
 
 test("une sauvegarde en ligne invalide ne modifie pas les données locales", async () => {
