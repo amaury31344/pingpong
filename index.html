@@ -58,11 +58,46 @@
           <article class="stat-card"><span class="stat-icon violet" aria-hidden="true">◎</span><p>Réussite</p><strong id="win-rate">—</strong><span>Sur les matchs enregistrés</span></article>
         </div>
         <div class="content-grid">
-          <article class="panel"><div class="panel-head"><div><span class="eyebrow">TON ÉVOLUTION</span><h3>Progression des points</h3></div><span class="subtle-tag">Estimation</span></div><div id="chart" class="chart"></div><p class="chart-note">Calcul indicatif, hors dérive et ajustements FFTT. Seuls les matchs de compétition comptent.</p></article>
+          <article class="panel"><div class="panel-head"><div><span class="eyebrow">TON ÉVOLUTION</span><h3>Progression des points</h3></div><span class="subtle-tag">Estimation</span></div><div id="chart" class="chart"></div><p id="chart-equipment" class="chart-note" hidden></p><p class="chart-note">Calcul indicatif, hors dérive et ajustements FFTT. Les matchs amicaux ne comptent pas.</p></article>
           <article class="panel"><div class="panel-head"><div><span class="eyebrow">EN CE MOMENT</span><h3>Forme récente</h3></div><a href="#matchs" class="text-link">Voir tout →</a></div><div id="recent" class="recent-list"></div></article>
         </div>
         <article class="panel goal-panel"><div class="panel-head"><div><span class="eyebrow">MOTIVATION</span><h3>Mon objectif personnel</h3></div></div><form id="goal-form" class="goal-form"><label for="goal-input">Ce que je souhaite travailler</label><input id="goal-input" maxlength="160" placeholder="Ex. améliorer ma régularité en remise"><div class="form-grid goal-target"><label>Points estimés à atteindre <span>facultatif</span><input id="goal-target" type="number" step="0.01" min="0" max="5000" placeholder="Ex. 600"></label><label>Échéance <span>nécessaire si objectif chiffré</span><input id="goal-date" type="date"></label></div><div class="goal-actions"><button class="btn btn-primary" type="submit">Enregistrer</button></div><p id="goal-progress" class="form-help" aria-live="polite"></p><p class="form-help">Estimation personnelle : la progression n’est pas garantie et ce n’est pas un classement officiel.</p></form></article>
         <article class="panel"><div class="panel-head"><div><span class="eyebrow">LES DERNIERS ÉCHANGES</span><h3>Derniers matchs</h3></div><button class="btn btn-outline add-match" type="button">＋ Ajouter</button></div><div id="recent-matches"></div></article>
+        <article class="panel feature-panel">
+          <div class="panel-head"><div><span class="eyebrow">TON ÉQUIPEMENT</span><h3>Mon carnet de matériel</h3></div></div>
+          <div class="feature-content">
+            <p class="form-help">Note les changements de raquette ou de revêtement. Un changement de matériel ne prouve pas la cause d’une évolution.</p>
+            <form id="equipment-form" class="form-grid">
+              <label>Matériel<select name="kind"><option value="racket">Raquette</option><option value="forehand">Revêtement coup droit</option><option value="backhand">Revêtement revers</option></select></label>
+              <label>Nom ou modèle<input name="name" maxlength="100" required placeholder="Ex. mon nouveau bois"></label>
+              <label>Date du changement<input name="date" type="date" required></label>
+              <label>Note personnelle <span>facultatif</span><input name="notes" maxlength="280" placeholder="Mes premières sensations"></label>
+              <div class="wide feature-actions"><button class="btn btn-primary" type="submit" id="equipment-submit">Ajouter au carnet</button><button class="btn btn-outline" type="button" id="equipment-cancel" hidden>Annuler la modification</button></div>
+            </form>
+            <div id="equipment-list"></div>
+          </div>
+        </article>
+        <article class="panel feature-panel">
+          <div class="panel-head"><div><span class="eyebrow">TON PARCOURS À PARTAGER</span><h3>Ma carte souvenir</h3></div></div>
+          <div class="feature-content">
+            <p class="form-help">Choisis une période et les informations à afficher. La carte ne contient pas automatiquement ton nom, ta licence, tes contacts ou les noms de tes adversaires. Elle est créée sur cet appareil.</p>
+            <form id="souvenir-form" class="form-grid">
+              <label>Du<input name="from" type="date" required></label>
+              <label>Au<input name="to" type="date" required></label>
+              <label class="feature-check"><input name="stats" type="checkbox" checked> Afficher mes matchs et mon bilan</label>
+              <label class="feature-check"><input name="delta" type="checkbox" checked> Afficher ma variation estimée</label>
+              <label class="wide">Mon meilleur souvenir <span>facultatif, visible sur la carte</span><input name="memory" maxlength="120" placeholder="Sans nommer d’autres personnes sans leur accord"></label>
+              <div class="wide"><button class="btn btn-primary" type="submit">Créer mon aperçu</button></div>
+            </form>
+            <div id="souvenir-preview" class="souvenir-preview" hidden aria-live="polite">
+              <span class="souvenir-brand">PING POINTS · CARTE SOUVENIR</span>
+              <h4>Mon parcours</h4>
+              <p id="souvenir-period"></p><p id="souvenir-stats"></p><p id="souvenir-delta"></p><p id="souvenir-memory"></p>
+              <p class="souvenir-disclaimer">Estimation personnelle, non officielle. Hors dérive et ajustements FFTT.</p>
+            </div>
+            <div class="feature-actions"><button id="souvenir-download" class="btn btn-outline" type="button" hidden>Télécharger l’image</button></div>
+          </div>
+        </article>
       </section>
 
       <section id="matchs" class="page" hidden>
@@ -119,7 +154,7 @@
             <div class="wide"><button class="btn btn-primary" type="submit">Enregistrer mon profil</button></div>
           </form>
         </article>
-        <article class="panel profile-panel backup-panel"><h3>Sauvegarde de cet appareil</h3><p class="form-help">Exporte ton profil, tes matchs, ton répertoire et tes records dans un fichier personnel. La restauration remplace les données actuelles après confirmation. Ce fichier peut contenir des coordonnées : conserve-le en lieu sûr.</p><div class="backup-actions"><button id="backup-export" class="btn btn-outline" type="button">Exporter ma sauvegarde</button><button id="backup-import" class="btn btn-outline" type="button">Restaurer une sauvegarde</button><input id="backup-file" type="file" accept=".json,application/json" hidden></div></article>
+        <article class="panel profile-panel backup-panel"><h3>Sauvegarde de cet appareil</h3><p class="form-help">Exporte ton profil, tes matchs, ton matériel, ton répertoire et tes records dans un fichier personnel. La restauration remplace les données actuelles après confirmation. Ce fichier peut contenir des coordonnées : conserve-le en lieu sûr.</p><div class="backup-actions"><button id="backup-export" class="btn btn-outline" type="button">Exporter ma sauvegarde</button><button id="backup-import" class="btn btn-outline" type="button">Restaurer une sauvegarde</button><input id="backup-file" type="file" accept=".json,application/json" hidden></div></article>
         <article class="panel profile-panel backup-panel cloud-panel">
           <h3>Compte et sauvegarde en ligne</h3>
           <p class="form-help">Connecte-toi par e-mail pour envoyer ou récupérer une copie privée. Ce pilote est réservé aux adultes. Les données restent aussi sur cet appareil, même après déconnexion : évite un appareil partagé.</p>

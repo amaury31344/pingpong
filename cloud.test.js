@@ -9,7 +9,7 @@ const source = fs.readFileSync("cloud.js", "utf8");
 const backup = {
   format: "ping-points-backup",
   version: 1,
-  data: { profile: null, matches: [], players: [], goal: "", arcadeRecords: {} }
+  data: { profile: null, matches: [], players: [], equipment: [{ id: "material-1", kind: "racket", name: "Raquette", date: "2026-09-01", notes: "" }], goal: "", arcadeRecords: {} }
 };
 
 function setup() {

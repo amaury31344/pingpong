@@ -57,7 +57,7 @@
   function summary(backup) {
     const value = backup.data;
     const profile = value.profile ? `Profil : ${value.profile.firstName} ${value.profile.lastName}` : "Aucun profil";
-    return `${profile}, ${value.matches.length} match(s), ${value.players.length} joueur(s), ${Object.keys(value.arcadeRecords || {}).length} record(s)`;
+    return `${profile}, ${value.matches.length} match(s), ${value.players.length} joueur(s), ${(value.equipment || []).length} entrée(s) de matériel, ${Object.keys(value.arcadeRecords || {}).length} record(s)`;
   }
 
   try {

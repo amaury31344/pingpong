@@ -29,6 +29,14 @@
       if (!player || !isText(player.id, 100) || !player.id || ids.has(player.id) || !isText(player.name, 120) || !player.name.trim() || !isText(player.city, 100) || !player.city.trim() || !isText(player.club, 100) || !isText(player.contact, 120)) throw new Error("Joueur invalide.");
       ids.add(player.id);
     }
+    if (data.equipment !== undefined) {
+      if (!Array.isArray(data.equipment) || data.equipment.length > 1000) throw new Error("Carnet de matériel invalide.");
+      ids.clear();
+      for (const item of data.equipment) {
+        if (!item || !isText(item.id, 100) || !item.id || ids.has(item.id) || !["racket", "forehand", "backhand"].includes(item.kind) || !isText(item.name, 100) || !item.name.trim() || !validDate(item.date) || !isText(item.notes, 280)) throw new Error("Entrée de matériel invalide.");
+        ids.add(item.id);
+      }
+    }
     if (data.arcadeRecords !== undefined) {
       if (!data.arcadeRecords || typeof data.arcadeRecords !== "object" || Array.isArray(data.arcadeRecords)) throw new Error("Records invalides.");
       for (const [key, value] of Object.entries(data.arcadeRecords)) {

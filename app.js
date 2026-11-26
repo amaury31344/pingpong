@@ -2,7 +2,7 @@
 
 const STORAGE_KEY = "ping-points-data-v2";
 const LEGACY_KEY = "ping-points-data-v1";
-const emptyData = () => ({ profile: null, matches: [], players: [], goal: "", arcadeRecords: {} });
+const emptyData = () => ({ profile: null, matches: [], players: [], equipment: [], goal: "", arcadeRecords: {} });
 const $ = selector => document.querySelector(selector);
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -20,6 +20,9 @@ let observedRaw = null;
 let editingMatchId = null;
 let pendingBackup = null;
 let pendingBackupRaw = null;
+let editingEquipmentId = null;
+let souvenir = null;
+const equipmentKinds = { racket: "Raquette", forehand: "Revêtement coup droit", backhand: "Revêtement revers" };
 
 function showNotice(message, error = false) {
   const notice = $("#notice");
@@ -108,6 +111,8 @@ function table(matches, deletable) {
 
 function renderChart(matches) {
   const chart = $("#chart");
+  const chartEquipment = $("#chart-equipment");
+  chartEquipment.hidden = true;
   if (!data.profile || !Number.isFinite(data.profile.startingPoints)) {
     chart.innerHTML = '<div class="empty">Renseigne ton profil et tes points de départ pour afficher ta progression.</div>';
     return;
@@ -125,7 +130,28 @@ function renderChart(matches) {
   const coords = values.map((value, i) => ({ x: 45 + i * 720 / (values.length - 1), y: 145 - (value - low) / range * 120, value }));
   const points = coords.map(point => `${point.x},${point.y}`).join(" ");
   const circles = coords.map(point => `<circle cx="${point.x}" cy="${point.y}" r="4" fill="#3ba987"><title>${number(point.value)} points</title></circle>`).join("");
-  chart.innerHTML = `<svg viewBox="0 0 800 180" role="img" aria-label="Progression de ${number(values[0])} à ${number(values.at(-1))} points sur ${scored.length} matchs"><line x1="45" y1="145" x2="765" y2="145" stroke="#e9f0ee"/><line x1="45" y1="85" x2="765" y2="85" stroke="#f1f5f3"/><polyline fill="none" stroke="#3ba987" stroke-width="3" stroke-linejoin="round" points="${points}"/>${circles}<text x="45" y="170" fill="#91a2ae" font-size="12">Départ · ${number(values[0])} pts</text><text x="765" y="170" text-anchor="end" fill="#91a2ae" font-size="12">${number(values.at(-1))} pts</text></svg>`;
+  const marked = (data.equipment || []).filter(item => item.date >= scored[0].date && item.date <= scored.at(-1).date);
+  const markers = [...new Set(marked.map(item => item.date))].map(date => {
+    const next = scored.findIndex(match => match.date >= date);
+    let x = coords[next + 1].x;
+    if (scored[next].date !== date) {
+      const before = Date.parse(`${scored[next - 1].date}T00:00:00Z`);
+      const after = Date.parse(`${scored[next].date}T00:00:00Z`);
+      const fraction = (Date.parse(`${date}T00:00:00Z`) - before) / (after - before);
+      x = coords[next].x + fraction * (x - coords[next].x);
+    }
+    return `<line x1="${x}" y1="15" x2="${x}" y2="145" stroke="#24659c" stroke-width="2" stroke-dasharray="4 4"/><text x="${x}" y="12" text-anchor="middle" fill="#24659c" font-size="12">M</text>`;
+  }).join("");
+  if (marked.length) {
+    chartEquipment.textContent = `M : repère de matériel entre les matchs enregistrés. ${marked.map(item => `${dateLabel(item.date)} : ${equipmentKinds[item.kind]} — ${item.name}`).join(" ; ")}. Placement approximatif ; l’ordre dans une même journée est inconnu.`;
+    chartEquipment.hidden = false;
+  }
+  chart.innerHTML = `<svg viewBox="0 0 800 180" role="img" aria-label="Progression de ${number(values[0])} à ${number(values.at(-1))} points sur ${scored.length} matchs"><line x1="45" y1="145" x2="765" y2="145" stroke="#e9f0ee"/><line x1="45" y1="85" x2="765" y2="85" stroke="#f1f5f3"/>${markers}<polyline fill="none" stroke="#3ba987" stroke-width="3" stroke-linejoin="round" points="${points}"/>${circles}<text x="45" y="170" fill="#91a2ae" font-size="12">Départ · ${number(values[0])} pts</text><text x="765" y="170" text-anchor="end" fill="#91a2ae" font-size="12">${number(values.at(-1))} pts</text></svg>`;
+}
+
+function renderEquipment() {
+  const items = chronological(data.equipment || []).reverse();
+  $("#equipment-list").innerHTML = items.length ? items.map(item => `<div class="equipment-row"><div><strong>${escapeHtml(equipmentKinds[item.kind])} · ${escapeHtml(item.name)}</strong><p>${escapeHtml(dateLabel(item.date))}${item.notes ? ` · ${escapeHtml(item.notes)}` : ""}</p></div><div class="equipment-actions"><button class="delete-btn" type="button" data-edit-equipment="${escapeHtml(item.id)}">Modifier</button><button class="delete-btn" type="button" data-delete-equipment="${escapeHtml(item.id)}">Supprimer</button></div></div>`).join("") : '<div class="empty">Ton carnet est vide. Ajoute ton premier changement de matériel.</div>';
 }
 
 function renderDirectory() {
@@ -153,6 +179,7 @@ function render(refreshForms = false) {
   $("#recent").innerHTML = matches.length ? matches.slice(0, 4).map(match => `<div class="recent-item"><span class="result-icon ${match.result}">${match.result === "win" ? "V" : "D"}</span><div><strong>${escapeHtml(match.opponent)}</strong><small>${escapeHtml(dateLabel(match.date))}</small></div><span class="delta ${match.result}">${match.kind === "friendly" ? "Amical" : `${signed(match.delta)} pts`}</span></div>`).join("") : '<div class="empty">Tes derniers résultats apparaîtront ici.</div>';
   renderChart(data.matches);
   renderDirectory();
+  renderEquipment();
   if (refreshForms) {
     $("#goal-input").value = data.goal || "";
     $("#goal-target").value = data.goalTarget?.points ?? "";
@@ -210,6 +237,101 @@ $("#goal-form").addEventListener("submit", event => {
   if (Boolean(target) !== Boolean(dueDate)) return showNotice("Renseigne à la fois la cible de points et l’échéance, ou laisse les deux vides.", true);
   const goalTarget = target ? { points: Number(target), dueDate } : null;
   if (save({ ...data, goal: $("#goal-input").value.trim(), goalTarget })) { render(); showNotice("Objectif enregistré sur cet appareil."); }
+});
+
+function resetEquipmentForm() {
+  editingEquipmentId = null;
+  $("#equipment-form").reset();
+  $("#equipment-submit").textContent = "Ajouter au carnet";
+  $("#equipment-cancel").hidden = true;
+}
+
+$("#equipment-cancel").addEventListener("click", resetEquipmentForm);
+$("#equipment-form").addEventListener("submit", event => {
+  event.preventDefault();
+  if (!data) return showNotice("Les données enregistrées sont illisibles.", true);
+  const form = new FormData(event.currentTarget);
+  const name = form.get("name").trim();
+  if (!name) return showNotice("Indique le nom du matériel.", true);
+  const existing = data.equipment || [];
+  if (editingEquipmentId && !existing.some(item => item.id === editingEquipmentId)) return showNotice("Cette entrée n’existe plus.", true);
+  const item = { id: editingEquipmentId ?? crypto.randomUUID(), kind: form.get("kind"), name, date: form.get("date"), notes: form.get("notes").trim() };
+  const equipment = editingEquipmentId ? existing.map(entry => entry.id === editingEquipmentId ? item : entry) : [...existing, item];
+  const next = { ...data, equipment };
+  try {
+    PingBackup.validateBackup({ format: "ping-points-backup", version: 1, data: next });
+  } catch (error) {
+    return showNotice(`Matériel non enregistré : ${error.message}`, true);
+  }
+  if (save(next)) { resetEquipmentForm(); render(); showNotice("Matériel enregistré sur cet appareil."); }
+});
+
+$("#souvenir-form").addEventListener("submit", event => {
+  event.preventDefault();
+  if (!data) return showNotice("Les données enregistrées sont illisibles.", true);
+  const form = new FormData(event.currentTarget);
+  const from = form.get("from"), to = form.get("to"), memory = form.get("memory").trim();
+  if (!form.has("stats") && !form.has("delta") && !memory) return showNotice("Choisis au moins une information à afficher.", true);
+  let summary;
+  try {
+    summary = PingSports.summarizePeriod(data.matches, from, to);
+  } catch (error) {
+    return showNotice(error.message, true);
+  }
+  souvenir = {
+    raw: observedRaw,
+    period: `Du ${dateLabel(from)} au ${dateLabel(to)}`,
+    stats: form.has("stats") ? `${summary.played} match(s) · ${summary.wins} victoire(s) · ${summary.losses} défaite(s)` : "",
+    delta: form.has("delta") ? (summary.scored ? `Variation estimée : ${signed(summary.delta)} pts · ${summary.scored} match(s) pris en compte` : "Aucun match avec variation sur cette période") : "",
+    memory: memory ? `Mon souvenir : ${memory}` : ""
+  };
+  for (const key of ["period", "stats", "delta", "memory"]) {
+    $(`#souvenir-${key}`).textContent = souvenir[key];
+    $(`#souvenir-${key}`).hidden = !souvenir[key];
+  }
+  $("#souvenir-preview").hidden = false;
+  $("#souvenir-download").hidden = false;
+});
+
+$("#souvenir-download").addEventListener("click", () => {
+  if (!souvenir) return;
+  if (observedRaw !== souvenir.raw || localStorage.getItem(STORAGE_KEY) !== souvenir.raw) return showNotice("Tes données ont changé depuis l’aperçu. Crée un nouvel aperçu avant de télécharger.", true);
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1200; canvas.height = 675;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("La création d’image n’est pas disponible dans ce navigateur.");
+    context.fillStyle = "#102e48"; context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = "#95dcff"; context.font = "bold 24px sans-serif"; context.fillText("PING POINTS · CARTE SOUVENIR", 70, 65);
+    context.fillStyle = "#ffffff"; context.font = "bold 58px sans-serif"; context.fillText("Mon parcours", 70, 145);
+    context.font = "30px sans-serif";
+    let y = 215;
+    for (const text of [souvenir.period, souvenir.stats, souvenir.delta, souvenir.memory].filter(Boolean)) {
+      let line = "";
+      for (const word of text.split(/\s+/)) {
+        const next = line ? `${line} ${word}` : word;
+        if (line && context.measureText(next).width > 1050) {
+          context.fillText(line, 70, y, 1050); y += 42; line = word;
+        } else line = next;
+      }
+      if (line) { context.fillText(line, 70, y, 1050); y += 55; }
+    }
+    context.fillStyle = "#d0e7f2"; context.font = "22px sans-serif";
+    context.fillText("Estimation personnelle, non officielle. Hors dérive et ajustements FFTT.", 70, 620, 1050);
+    canvas.toBlob(blob => {
+      if (!blob) return showNotice("La création de l’image a échoué.", true);
+      try {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url; link.download = "ping-points-carte-souvenir.png"; link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch (error) {
+        showNotice(`Téléchargement impossible : ${error.message}`, true);
+      }
+    }, "image/png");
+  } catch (error) {
+    showNotice(`Téléchargement impossible : ${error.message}`, true);
+  }
 });
 
 $("#profile-form").addEventListener("submit", event => {
@@ -305,6 +427,24 @@ document.addEventListener("click", event => {
   const matchButton = event.target.closest("[data-delete-match]");
   const editButton = event.target.closest("[data-edit-match]");
   const playerButton = event.target.closest("[data-delete-player]");
+  const editEquipment = event.target.closest("[data-edit-equipment]");
+  const deleteEquipment = event.target.closest("[data-delete-equipment]");
+  if (editEquipment) {
+    const item = (data.equipment || []).find(entry => entry.id === editEquipment.dataset.editEquipment);
+    if (!item) return showNotice("Cette entrée n’existe plus.", true);
+    editingEquipmentId = item.id;
+    const form = $("#equipment-form");
+    for (const key of ["kind", "name", "date", "notes"]) form.elements[key].value = item[key];
+    $("#equipment-submit").textContent = "Enregistrer la modification";
+    $("#equipment-cancel").hidden = false;
+    form.elements.name.focus();
+  }
+  if (deleteEquipment && confirm("Supprimer cette entrée de matériel ?")) {
+    if (save({ ...data, equipment: (data.equipment || []).filter(item => item.id !== deleteEquipment.dataset.deleteEquipment) })) {
+      if (editingEquipmentId === deleteEquipment.dataset.deleteEquipment) resetEquipmentForm();
+      render(); showNotice("Entrée de matériel supprimée.");
+    }
+  }
   if (editButton) {
     const match = data.matches.find(item => item.id === editButton.dataset.editMatch);
     if (match) openMatch(match);
@@ -335,6 +475,7 @@ window.PingApp = {
     const restored = PingBackup.validateBackup(backup);
     if (expectedRaw !== observedRaw) throw new Error("Les données locales ont changé depuis l’aperçu. Recommence la restauration.");
     if (!save(restored)) return false;
+    resetEquipmentForm();
     render(true);
     window.dispatchEvent(new Event("ping-data-restored"));
     return true;
@@ -361,7 +502,7 @@ $("#backup-file").addEventListener("change", async event => {
   try {
     if (file.size > 5 * 1024 * 1024) throw new Error("Le fichier dépasse 5 Mo.");
     const restored = PingBackup.validateBackup(JSON.parse(await file.text()));
-    const describe = value => value ? `Profil : ${value.profile ? `${value.profile.firstName} ${value.profile.lastName}` : "aucun"}\nMatchs : ${value.matches.length}\nJoueurs : ${value.players.length}\nObjectif : ${value.goal || value.goalTarget ? "oui" : "non"}\nRecords : ${Object.keys(value.arcadeRecords || {}).length}` : "Données actuelles illisibles";
+    const describe = value => value ? `Profil : ${value.profile ? `${value.profile.firstName} ${value.profile.lastName}` : "aucun"}\nMatchs : ${value.matches.length}\nJoueurs : ${value.players.length}\nMatériel : ${(value.equipment || []).length}\nObjectif : ${value.goal || value.goalTarget ? "oui" : "non"}\nRecords : ${Object.keys(value.arcadeRecords || {}).length}` : "Données actuelles illisibles";
     pendingBackup = restored;
     pendingBackupRaw = observedRaw;
     $("#backup-dialog .dialog-alert")?.remove();
@@ -376,7 +517,7 @@ $("#backup-confirm").addEventListener("click", () => {
   if (!pendingBackup) return;
   if (pendingBackupRaw !== observedRaw) return showNotice("Les données ont changé depuis l’aperçu. Annule et sélectionne à nouveau la sauvegarde.", true);
   if (save(pendingBackup)) {
-    $("#backup-dialog").close(); render(true); window.dispatchEvent(new Event("ping-data-restored")); showNotice("Sauvegarde restaurée.");
+    $("#backup-dialog").close(); resetEquipmentForm(); render(true); window.dispatchEvent(new Event("ping-data-restored")); showNotice("Sauvegarde restaurée.");
   }
 });
 
