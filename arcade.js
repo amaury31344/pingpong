@@ -14,6 +14,7 @@
   const quit = document.querySelector("#arcade-quit");
   const status = document.querySelector("#arcade-status");
   const touch = document.querySelector("#arcade-touch");
+  const partnerTouch = document.querySelector("#arcade-partner-touch");
   const record = document.querySelector("#arcade-record");
   const keys = new Set();
   let game = null, state = "idle", previous = 0, countdown = 0, announced = "", animation = 0, audio = null;
@@ -32,7 +33,9 @@
     pause.disabled = !ongoing;
     quit.disabled = !ongoing;
     pause.textContent = state === "paused" ? "Reprendre" : "Pause";
-    touch.hidden = mode.value === "coop" || control.value !== "touch";
+    touch.hidden = mode.value !== "coop" && control.value !== "touch";
+    partnerTouch.hidden = mode.value !== "coop";
+    touch.textContent = mode.value === "coop" ? "↔  Joueur du bas : glisse ici" : "↔  Glisse ici pour déplacer ta raquette";
     document.querySelector("#arcade-opponent-label").textContent = mode.value === "coop" ? "MEILLEUR" : "ORDINATEUR";
     document.querySelector("#arcade-player-label").textContent = mode.value === "coop" ? "ÉCHANGE" : "TOI";
     document.querySelector("#arcade-score-label").textContent = mode.value === "coop" ? "RENVOIS ENSEMBLE" : "À 11 POINTS · 2 D’ÉCART";
@@ -182,12 +185,36 @@
       game.movePlayer((event.clientX - bounds.left) / bounds.width * engine.WIDTH);
     }
   });
-  function moveTouch(event) {
-    if (!game || control.value !== "touch" || !["playing", "countdown"].includes(state)) return;
-    const bounds = touch.getBoundingClientRect();
-    game.movePlayer((event.clientX - bounds.left) / bounds.width * engine.WIDTH);
+  function bindTouch(zone, partner) {
+    let pointer = null;
+    function enabled() {
+      return game && ["playing", "countdown"].includes(state) &&
+        (partner ? game.cooperative : game.cooperative || control.value === "touch");
+    }
+    function move(event) {
+      if (!enabled()) return;
+      const bounds = zone.getBoundingClientRect();
+      if (!bounds.width) return;
+      const x = (event.clientX - bounds.left) / bounds.width * engine.WIDTH;
+      if (partner) game.movePartner(x);
+      else game.movePlayer(x);
+    }
+    zone.addEventListener("pointerdown", event => {
+      if (!enabled() || pointer !== null) return;
+      event.preventDefault();
+      pointer = event.pointerId;
+      zone.setPointerCapture(pointer);
+      move(event);
+    });
+    zone.addEventListener("pointermove", event => {
+      if (event.pointerId === pointer) { event.preventDefault(); move(event); }
+    });
+    const release = event => { if (event.pointerId === pointer) pointer = null; };
+    zone.addEventListener("pointerup", release);
+    zone.addEventListener("pointercancel", release);
+    zone.addEventListener("lostpointercapture", release);
   }
-  touch.addEventListener("pointerdown", event => { if (control.value === "touch") { event.preventDefault(); touch.setPointerCapture(event.pointerId); moveTouch(event); } });
-  touch.addEventListener("pointermove", event => { if (touch.hasPointerCapture(event.pointerId)) moveTouch(event); });
+  bindTouch(touch, false);
+  bindTouch(partnerTouch, true);
   controls(); recordText(); draw();
 })();

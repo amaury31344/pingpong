@@ -61,6 +61,6 @@ Les filtres par date, type et résultat montrent la taille de l'échantillon et 
 
 Ping Arcade est un jeu autonome, sans effet sur les points ou matchs. La balle et l'ordinateur s'adaptent aux réglages ; les commandes sont choisies avant la partie et les records sont séparés par version de règles, difficulté, commande et mode découverte. La page en arrière-plan et le changement de section mettent le jeu en pause. Le son est désactivé par défaut. Ce mode arcade ne mesure pas le niveau sportif et ne prétend pas être accessible à toutes les personnes malvoyantes. Le nom Ping Arcade est provisoire et sa disponibilité n'a pas été vérifiée.
 
-Le défi coopératif se joue sur un clavier physique : flèches pour la raquette du bas, touches A et D pour celle du haut. Le but est de prolonger l'échange ensemble ; le meilleur échange est conservé pendant la partie seulement.
+Le défi coopératif se joue à deux sur le même écran tactile grâce à deux zones indépendantes, ou sur un clavier physique : flèches pour la raquette du bas, touches A et D pour celle du haut. Le but est de prolonger l'échange ensemble ; le meilleur échange est conservé pendant la partie seulement.
 
 Pour reconstruire le client Supabase : `npm ci && npm run build:cloud`. Les tests locaux se lancent avec `npm test`. Le quiz, les défis en ligne et l'organisation de séances partagées sont hors du prototype actuel.

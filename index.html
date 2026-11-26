@@ -233,7 +233,8 @@
         <div class="arcade-layout">
           <div class="panel arcade-game">
             <div class="arcade-score" aria-label="Score"><div><span id="arcade-opponent-label">ORDINATEUR</span> <strong id="arcade-opponent-score">0</strong></div><span id="arcade-score-label">À 11 POINTS · 2 D’ÉCART</span><div><span id="arcade-player-label">TOI</span> <strong id="arcade-player-score">0</strong></div></div>
-            <canvas id="arcade-canvas" width="720" height="1000" role="img" aria-label="Table de jeu vue du dessus, raquette du joueur en bas et ordinateur en haut. Le score et l’état sont indiqués hors du terrain."></canvas>
+            <div id="arcade-partner-touch" class="arcade-touch arcade-partner-touch" aria-label="Zone tactile pour déplacer la raquette du joueur du haut" hidden>↔ &nbsp; Joueur du haut : glisse ici</div>
+            <canvas id="arcade-canvas" width="720" height="1000" role="img" aria-label="Table de jeu vue du dessus, raquette du joueur en bas et adversaire ou partenaire en haut. Le score et l’état sont indiqués hors du terrain."></canvas>
             <div id="arcade-touch" class="arcade-touch" aria-label="Zone tactile pour déplacer la raquette">↔ &nbsp; Glisse ici pour déplacer ta raquette</div>
             <div id="arcade-status" class="arcade-status" role="status" aria-live="polite">Choisis tes réglages puis lance une partie.</div>
             <div class="arcade-buttons"><button id="arcade-start" type="button" class="btn btn-primary">Lancer la partie</button><button id="arcade-pause" type="button" class="btn btn-outline" disabled>Pause</button><button id="arcade-quit" type="button" class="btn btn-outline" disabled>Quitter</button></div>
@@ -241,8 +242,8 @@
           <aside class="panel arcade-settings">
             <h3>Réglages de la partie</h3>
             <label for="arcade-mode">Mode</label>
-            <select id="arcade-mode"><option value="solo">Contre l’ordinateur</option><option value="coop">Défi coopératif à deux sur un clavier</option></select>
-            <p id="arcade-coop-help" class="form-help" hidden>Ensemble, prolongez l’échange ! Joueur du bas : flèches ← → ; joueur du haut : touches A et D. Aucun point contre un partenaire. Clavier physique nécessaire.</p>
+            <select id="arcade-mode"><option value="solo">Contre l’ordinateur</option><option value="coop">Défi coopératif à deux</option></select>
+            <p id="arcade-coop-help" class="form-help" hidden>Ensemble, prolongez l’échange ! Sur mobile, chaque joueur glisse dans sa zone tactile ; vous pouvez jouer en même temps sur le même écran. Au clavier : flèches ← → en bas, touches A et D en haut. Aucun point contre un partenaire.</p>
             <label for="arcade-difficulty">Difficulté</label>
             <select id="arcade-difficulty"><option value="easy">Facile</option><option value="normal" selected>Normal</option><option value="hard">Difficile</option></select>
             <p class="form-help">Facile : réaction lente, déplacement lent. Normal : intermédiaire. Difficile : réaction rapide, déplacement rapide.</p>
