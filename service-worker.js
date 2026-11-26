@@ -1,6 +1,6 @@
 "use strict";
-const CACHE = "ping-points-static-v12";
-const FILES = ["./", "./index.html", "./styles.css", "./app.js", "./share.js", "./profile-photo.js", "./ranking.js", "./sports.js", "./backup.js", "./cloud-client.bundle.js", "./cloud.js", "./directory-core.js", "./directory.js", "./arcade-engine.js", "./arcade.js", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
+const CACHE = "ping-points-static-v13";
+const FILES = ["./", "./index.html", "./styles.css", "./app.js", "./share.js", "./profile-photo.js", "./ranking.js", "./sports.js", "./backup.js", "./cloud-client.bundle.js", "./cloud.js", "./directory-core.js", "./directory.js", "./social.js", "./arcade-engine.js", "./arcade.js", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)).then(() => self.skipWaiting()));

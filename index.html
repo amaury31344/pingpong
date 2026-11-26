@@ -29,6 +29,7 @@
   <script defer src="cloud.js"></script>
   <script defer src="directory-core.js"></script>
   <script defer src="directory.js"></script>
+  <script defer src="social.js"></script>
   <script defer src="arcade-engine.js"></script>
   <script defer src="arcade.js"></script>
 </head>
@@ -40,6 +41,7 @@
       <a href="#accueil" class="nav-item" data-page="accueil"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg></span> Tableau de bord</a>
       <a href="#matchs" class="nav-item" data-page="matchs"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span> Mes matchs</a>
       <a href="#joueurs" class="nav-item" data-page="joueurs"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v1"/></svg></span> Trouver des joueurs</a>
+      <a href="#amis" class="nav-item" data-page="amis"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h6"/></svg></span> Amis et messages</a>
       <a href="#arcade" class="nav-item" data-page="arcade"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="5"/><path d="M7 13h4m-2-2v4m7-3h.01m2 3h.01"/></svg></span> Ping Arcade</a>
       <a href="#profil" class="nav-item" data-page="profil"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span> Mon profil</a>
       <a href="#partager" class="nav-item" data-page="partager"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="m8 11 8-5M8 13l8 5"/></svg></span> Partager et installer</a>
@@ -122,10 +124,10 @@
 
       <section id="joueurs" class="page" hidden>
         <div class="section-title"><div><span class="eyebrow">LA COMMUNAUTÉ</span><h2>Trouver des joueurs</h2><p>Recherche les joueurs Ping Points qui ont choisi de partager leur profil.</p></div></div>
-        <div class="info-box">La recherche nécessite un compte connecté. Elle ne contient pas tous les joueurs FFTT : les données sont déclarées par chaque joueur et les points affichés sont des estimations non officielles.</div>
+        <div class="info-box">Les profils publics sont visibles par tous. Les anciens profils partagés uniquement avec les comptes connectés restent limités à ces comptes. Les données sont déclarées par les joueurs et les points sont des estimations non officielles.</div>
         <article class="panel directory">
           <h3>Rechercher un joueur</h3>
-          <p id="online-directory-status" class="form-help" role="status" aria-live="polite">Connecte-toi depuis <a href="#profil">Mon profil</a> pour rechercher.</p>
+          <p id="online-directory-status" class="form-help" role="status" aria-live="polite">Recherche par nom public ou pseudonyme.</p>
           <form id="online-directory-search" class="online-directory-search">
             <label for="online-directory-query">Nom public du joueur</label>
             <input id="online-directory-query" type="search" minlength="2" maxlength="80" required placeholder="Au moins 2 caractères">
@@ -135,7 +137,7 @@
         </article>
         <article class="panel directory feature-panel">
           <h3>Partager mon profil</h3>
-          <p class="form-help">Facultatif : les informations choisies seront visibles par les autres comptes connectés, qui peuvent les enregistrer ou les copier. N’indique pas de contact dans ton nom public. La licence, les coordonnées, les notes et les noms d’adversaires ne sont jamais envoyés.</p>
+          <p class="form-help">Après confirmation, ton profil est public et visible par tous, même sans compte. Les autres peuvent copier ces informations. N’indique pas de contact dans ton nom public ou ta bio. La licence, les coordonnées, les notes et les noms d’adversaires ne sont jamais envoyés.</p>
           <p class="form-help">Les dates et résultats peuvent néanmoins permettre de reconnaître une rencontre. Tu peux retirer ton profil à tout moment ; cela ne supprime pas les copies déjà faites par d’autres.</p>
           <p class="form-help">Ton profil partagé est un instantané : republie-le pour mettre à jour tes points ou tes matchs.</p>
           <p id="directory-sharing-status" class="cloud-status" role="status" aria-live="polite">Connecte-toi depuis Mon profil pour partager.</p>
@@ -146,13 +148,26 @@
             <label class="feature-check"><input name="points" type="checkbox"> Partager mes points estimés</label>
             <label class="feature-check"><input name="stats" type="checkbox"> Partager mon nombre de matchs et mes victoires</label>
             <label class="feature-check wide"><input name="matches" type="checkbox"> Partager les dates, types et résultats de mes 10 derniers matchs</label>
-            <label class="feature-check wide"><input name="consent" type="checkbox" required> J’ai au moins 18 ans et j’accepte de rendre ces informations visibles aux comptes connectés.</label>
-            <div class="wide feature-actions"><button class="btn btn-primary" type="submit">Vérifier et publier</button><button id="directory-unpublish" class="btn btn-outline" type="button">Retirer mon profil partagé</button></div>
+            <label class="feature-check"><input name="bio" type="checkbox" checked> Partager ma bio enregistrée</label>
+            <label class="feature-check"><input name="photo" type="checkbox" checked> Partager ma photo enregistrée</label>
+            <label class="feature-check wide"><input name="consent" type="checkbox" required> J’ai au moins 18 ans et j’accepte de rendre ces informations publiques.</label>
+            <div class="wide feature-actions"><button class="btn btn-primary" type="submit">Vérifier et publier</button><button id="directory-unpublish" class="btn btn-outline" type="button">Rendre mon profil privé</button></div>
           </form>
         </article>
         <article class="panel directory feature-panel">
           <div class="panel-head"><div><h3>Mon répertoire personnel</h3><p class="form-help">Ces contacts restent sur cet appareil et ne sont pas publiés.</p></div><button class="btn btn-outline" id="add-player" type="button">＋ Ajouter</button></div>
           <label for="directory-search">Rechercher par ville, club ou nom</label><input id="directory-search" type="search" placeholder="Ex. Lille, Loos Sport TT…"><div id="player-list"></div>
+        </article>
+      </section>
+
+      <section id="amis" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">LA COMMUNAUTÉ</span><h2>Amis et messages</h2><p>Accepte une demande pour discuter avec un joueur.</p></div></div>
+        <div class="info-box">La messagerie est réservée aux amis acceptés. Les messages ne sont pas chiffrés de bout en bout ; ton correspondant peut les copier. Bloquer ou retirer une relation supprime les messages enregistrés dans l’application pour vous deux, pas les copies externes.</div>
+        <article class="panel directory"><h3>Mes relations</h3><p id="social-status" class="form-help" role="status" aria-live="polite"></p><div class="backup-actions"><button id="social-refresh" class="btn btn-outline" type="button">Actualiser</button></div><div id="social-list"></div></article>
+        <article class="panel directory feature-panel" id="chat-panel" hidden>
+          <h3 id="chat-title">Discussion</h3><p id="chat-status" class="form-help" role="status" aria-live="polite"></p>
+          <div id="chat-messages" class="chat-messages" aria-live="polite"></div>
+          <form id="chat-form"><label for="chat-body">Message</label><textarea id="chat-body" maxlength="2000" rows="3" required placeholder="Écris ton message"></textarea><div class="backup-actions"><button class="btn btn-primary" type="submit">Envoyer</button><button id="chat-refresh" class="btn btn-outline" type="button">Actualiser la discussion</button></div></form>
         </article>
       </section>
 
@@ -226,7 +241,7 @@
             <label>Ville <span>facultatif</span><input name="city" maxlength="100" autocomplete="address-level2" placeholder="Ta ville"></label>
             <div class="points-field"><label for="starting-points">Points au début de la saison</label><div class="points-stepper"><button id="points-decrease" type="button" aria-label="Diminuer les points de 1">−</button><input id="starting-points" name="startingPoints" type="number" step="0.01" min="0" max="5000" value="500" required><button id="points-increase" type="button" aria-label="Augmenter les points de 1">+</button></div></div>
             <label class="wide">Bio <span>facultative</span><textarea name="bio" maxlength="300" rows="3" placeholder="Quelques mots sur toi et ton parcours"></textarea></label>
-            <p class="form-help wide">Ta bio et ta photo restent privées et ne sont pas publiées dans la recherche de joueurs. Elles sont incluses si tu exportes ou envoies manuellement ta sauvegarde.</p>
+            <p class="form-help wide">Ta bio et ta photo restent privées tant que tu ne les publies pas depuis Trouver des joueurs. Elles sont incluses si tu exportes ou envoies manuellement ta sauvegarde.</p>
             <p class="form-help wide">Le total est une estimation à partir de ce point de départ et des matchs enregistrés. La dérive de mi-saison, les bonus et corrections officiels ne sont pas appliqués automatiquement.</p>
             <div class="wide"><button class="btn btn-primary" type="submit">Enregistrer mon profil</button></div>
           </form>
