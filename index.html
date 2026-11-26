@@ -184,7 +184,7 @@
 
       <section id="amis" class="page" hidden>
         <div class="section-title"><div><span class="eyebrow">LA COMMUNAUTÉ</span><h2>Amis et messages</h2><p>Accepte une demande pour discuter avec un joueur.</p></div></div>
-        <div class="info-box">La messagerie est réservée aux amis acceptés. Les messages ne sont pas chiffrés de bout en bout ; ton correspondant peut les copier. Bloquer ou retirer une relation supprime les messages enregistrés dans l’application pour vous deux, pas les copies externes.</div>
+        <div class="info-box">La messagerie est réservée aux amis acceptés. Les messages ne sont pas chiffrés de bout en bout ; ton correspondant peut les copier. Tu peux signaler un message reçu : son contenu et les comptes concernés sont conservés pour examen. Le signalement ne bloque pas automatiquement. Bloquer ou retirer une relation supprime les messages enregistrés dans l’application pour vous deux, mais pas les signalements ni les copies externes.</div>
         <article class="panel directory"><h3>Mes relations</h3><p id="social-status" class="form-help" role="status" aria-live="polite"></p><div class="backup-actions"><button id="social-refresh" class="btn btn-outline" type="button">Actualiser</button></div><div id="social-list"></div></article>
         <article class="panel directory feature-panel" id="chat-panel" hidden>
           <h3 id="chat-title">Discussion</h3><p id="chat-status" class="form-help" role="status" aria-live="polite"></p>
@@ -219,6 +219,7 @@
             <label>Date et heure locales<input name="starts" type="datetime-local" required></label>
             <label>Ville<input name="city" minlength="2" maxlength="100" required></label>
             <label>Lieu partagé<input name="venue" minlength="2" maxlength="150" required placeholder="Nom de la salle"></label>
+            <label>Places pour d’autres joueurs<input name="capacity" type="number" min="1" max="30" step="1" value="1" required></label>
             <label>Objectif<select name="goal"><option value="training">Entraînement</option><option value="competition">Compétition</option><option value="resume">Reprise tranquille</option><option value="leisure">Loisir</option></select></label>
             <label>Tarif<input name="fee" maxlength="80" required placeholder="Gratuit, 5 €, inconnu…"></label>
             <label>Accès fauteuil<select name="wheelchair"><option value="unknown">À confirmer</option><option value="yes">Oui</option><option value="no">Non</option></select></label>
@@ -228,7 +229,7 @@
             <div class="wide"><button class="btn btn-primary" type="submit">Vérifier et publier</button></div>
           </form>
         </article>
-        <article class="panel directory feature-panel"><h3>Séances et invitations</h3><p class="form-help">Les alertes sont affichées ici, sans notification, jusqu’à 50 séances. Tes séances apparaissent en premier, y compris les séances passées pour que tu puisses les supprimer. Un lien d’invitation fonctionne pour les personnes connectées jusqu’à suppression de la séance ou sa date de début. Si tu n’es pas connecté, connecte-toi puis rouvre le lien.</p><div class="backup-actions"><button id="practice-refresh" class="btn btn-outline" type="button">Actualiser</button></div><div id="practice-list"></div><label for="practice-link">Lien d’invitation sélectionné</label><input id="practice-link" type="url" readonly placeholder="Sélectionne une séance"><div class="backup-actions"><button id="practice-copy" class="btn btn-outline" type="button">Copier le lien</button></div></article>
+        <article class="panel directory feature-panel"><h3>Séances et invitations</h3><p class="form-help">Les alertes sont affichées ici, sans notification, jusqu’à 50 séances. Les places indiquées excluent l’organisateur. Tu peux participer ou annuler avant la séance ; l’application affiche le nombre de participants, sans leurs noms. Tes séances apparaissent en premier, y compris les séances passées pour que tu puisses les supprimer. Un lien d’invitation fonctionne pour les personnes connectées jusqu’à suppression de la séance ou sa date de début. Si tu n’es pas connecté, connecte-toi puis rouvre le lien.</p><div class="backup-actions"><button id="practice-refresh" class="btn btn-outline" type="button">Actualiser</button></div><div id="practice-list"></div><label for="practice-link">Lien d’invitation sélectionné</label><input id="practice-link" type="url" readonly placeholder="Sélectionne une séance"><div class="backup-actions"><button id="practice-copy" class="btn btn-outline" type="button">Copier le lien</button></div></article>
       </section>
 
       <section id="arcade" class="page" hidden>
@@ -314,7 +315,7 @@
         <article class="panel profile-panel backup-panel cloud-panel">
           <h3>Compte et sauvegarde en ligne</h3>
           <p class="form-help">Connecte-toi par e-mail pour envoyer ou récupérer une copie privée. Ce pilote est réservé aux adultes. Les données restent aussi sur cet appareil, même après déconnexion : évite un appareil partagé.</p>
-          <p class="form-help">La sauvegarde n’est pas automatique : choisis quand envoyer ou restaurer. Le lien de connexion ouvre le site en ligne.</p>
+          <p class="form-help">La sauvegarde n’est pas automatique. Pour passer sur un autre appareil, envoie d’abord une copie depuis l’appareil qui possède les dernières données, puis connecte-toi et restaure-la sur l’autre appareil. Compare les copies avant de choisir : la restauration remplace les données locales. Le lien de connexion ouvre le site en ligne.</p>
           <p id="cloud-status" class="cloud-status" role="status" aria-live="polite">Vérification de la connexion…</p>
           <form id="cloud-login" class="cloud-login">
             <label for="cloud-email">Adresse e-mail</label>
@@ -323,6 +324,7 @@
             <button class="btn btn-primary" type="submit">Recevoir un lien de connexion</button>
           </form>
           <div id="cloud-actions" class="backup-actions" hidden>
+            <button id="cloud-compare" class="btn btn-outline" type="button">Comparer les copies</button>
             <button id="cloud-upload" class="btn btn-primary" type="button">Envoyer une copie en ligne</button>
             <button id="cloud-download" class="btn btn-outline" type="button">Restaurer la copie en ligne</button>
             <button id="cloud-logout" class="btn btn-outline" type="button">Se déconnecter</button>

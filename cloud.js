@@ -88,6 +88,20 @@
     });
   });
 
+  $("#cloud-compare").addEventListener("click", () => perform(async () => {
+    const id = userId();
+    const local = PingApp.backupSnapshot();
+    const remote = await readBackup(id);
+    if (PingApp.backupSnapshot().raw !== local.raw) throw new Error("Les données locales ont changé pendant la comparaison. Recommence.");
+    if (!remote) {
+      message(`Cet appareil : ${summary(local.backup)}. Aucune copie en ligne pour ce compte.`);
+      return;
+    }
+    const date = new Date(remote.updated_at);
+    const when = Number.isNaN(date.getTime()) ? "date inconnue" : date.toLocaleString("fr-FR");
+    message(`Cet appareil : ${summary(local.backup)}. Copie en ligne (${when}) : ${summary(remote.payload)}. Choisis ensuite d’envoyer ou de restaurer ; aucun changement n’a été effectué.`);
+  }));
+
   $("#cloud-upload").addEventListener("click", () => perform(async () => {
     const id = userId();
     const snapshot = PingApp.backupSnapshot();

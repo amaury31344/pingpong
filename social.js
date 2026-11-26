@@ -103,7 +103,21 @@
       const time = document.createElement("small");
       time.textContent = `${message.sender === id ? "Toi" : selected.display_name} · ${new Date(message.created_at).toLocaleString("fr-FR")}`;
       item.append(body, time);
+      if (message.sender !== id) item.append(button("Signaler ce message", () => reportMessage(message.id)));
       messages.append(item);
+    }
+    async function reportMessage(messageId) {
+      const id = cloud?.getUserId(), peer = selected?.user_id, version = revision;
+      if (!id || !peer || activeTask) return;
+      if (!confirm("Signaler ce message ? Son contenu et les comptes concernés seront enregistrés pour examen par l’équipe du site. Le signalement ne bloque pas automatiquement le joueur.")) return;
+      const token = {};
+      activeTask = token;
+      try {
+        await rpc("ping_report_message", { p_message_id: messageId });
+        if (current(id, version) && selected?.user_id === peer) say(chatStatus, "Signalement enregistré. Il ne bloque pas automatiquement le joueur.");
+      } catch (error) {
+        if (current(id, version) && selected?.user_id === peer) say(chatStatus, `Signalement impossible : ${error.message}`, true);
+      } finally { if (activeTask === token) activeTask = null; }
     }
     say(chatStatus, rows.length === 100 ? "100 derniers messages affichés." : rows.length ? "" : "Aucun message pour le moment.");
     messages.scrollTop = messages.scrollHeight;

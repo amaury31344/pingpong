@@ -89,3 +89,18 @@ test("une réponse d’un ancien compte ne s’affiche pas après un changement 
   assert.equal(t.elements["#social-list"].children.length, 0);
   assert.match(t.elements["#social-status"].textContent, /Aucune relation/);
 });
+
+test("un message reçu peut être signalé sans envoyer le contenu depuis le navigateur", async () => {
+  const t = setup();
+  t.state.user = "a";
+  t.listeners["ping-cloud-session"]();
+  await settle();
+  t.elements["#social-list"].children[0].children[2].children[0].click();
+  await settle();
+  t.elements["#chat-messages"].children[0].children[2].click();
+  await settle();
+  const report = t.state.calls.find(call => call.name === "ping_report_message");
+  assert.equal(report.args.p_message_id, 1);
+  assert.equal(Object.keys(report.args).length, 1);
+  assert.match(t.elements["#chat-status"].textContent, /enregistré/);
+});

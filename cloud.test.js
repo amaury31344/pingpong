@@ -14,7 +14,7 @@ const backup = {
 
 function setup() {
   const elements = new Map();
-  for (const id of ["cloud-login", "cloud-actions", "cloud-status", "cloud-email", "cloud-upload", "cloud-download", "cloud-logout"]) {
+  for (const id of ["cloud-login", "cloud-actions", "cloud-status", "cloud-email", "cloud-compare", "cloud-upload", "cloud-download", "cloud-logout"]) {
     elements.set(`#${id}`, {
       hidden: false, disabled: false, value: "", textContent: "",
       classList: { toggle() {} },
@@ -135,4 +135,14 @@ test("les modifications locales pendant l’aperçu bloquent l’envoi", async (
   await t.click("cloud-upload");
   assert.equal(t.state.calls.length, 0);
   assert.match(t.elements.get("#cloud-status").textContent, /locales ont changé/i);
+});
+
+test("comparer les copies n’écrase aucune donnée", async () => {
+  const t = setup();
+  t.login();
+  t.state.remote = { version: 3, payload: backup, updated_at: "2026-09-01T10:00:00Z" };
+  await t.click("cloud-compare");
+  assert.equal(t.state.calls.length, 0);
+  assert.equal(t.state.restored, 0);
+  assert.match(t.elements.get("#cloud-status").textContent, /aucun changement/i);
 });

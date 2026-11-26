@@ -54,7 +54,7 @@
     url.hash = "seances";
     return url.href;
   }
-  function renderSessions(rows, ownId, prefix = "") {
+  function renderSessions(rows, availabilityById, ownId, prefix = "") {
     if (!rows.length) { line(list, prefix || "Aucune séance à afficher."); return; }
     for (const row of rows) {
       const card = document.createElement("article");
@@ -65,6 +65,9 @@
       line(card, `${row.display_name} · ${new Date(row.starts_at).toLocaleString("fr-FR")} · ${row.city} · ${row.venue}`);
       line(card, `Objectif : ${goals[row.goal]} · Tarif : ${row.fee}`);
       line(card, `Accès fauteuil : ${yesNo[row.wheelchair]} · Prêt de raquette : ${yesNo[row.equipment]} · Vestiaires : ${yesNo[row.changing]} · Débutants : ${yesNo[row.beginners]}`);
+      const attendance = availabilityById.get(row.id);
+      if (attendance) line(card, `Places pour les autres joueurs : ${Math.max(0, attendance.capacity - attendance.attendees)} / ${attendance.capacity} disponibles${attendance.joined ? " · Tu participes" : ""}.`);
+      else line(card, "Places indisponibles : actualise les séances.");
       const actions = document.createElement("div");
       actions.className = "backup-actions";
       actions.append(button("Obtenir le lien", () => { $("#practice-link").value = invitation(row.id); $("#practice-link").focus(); $("#practice-link").select(); }));
@@ -78,7 +81,19 @@
           if (current(id, generation)) say("Séance supprimée.");
         });
       }));
-      else actions.append(button("Demander en ami", () => window.PingSocial.request(row.owner_id)));
+      else {
+        if (attendance && new Date(row.starts_at) > new Date()) {
+          const join = button(attendance.joined ? "Annuler ma participation" : "Je participe", () => perform(async (id, generation) => {
+            await rpc("ping_set_practice_attendance", { p_id: row.id, p_join: !attendance.joined });
+            if (!current(id, generation)) return;
+            await loadSessions(id, generation);
+            if (current(id, generation)) say(attendance.joined ? "Participation annulée." : "Participation enregistrée.");
+          }));
+          join.disabled = !attendance.joined && attendance.attendees >= attendance.capacity;
+          actions.append(join);
+        }
+        actions.append(button("Demander en ami", () => window.PingSocial.request(row.owner_id)));
+      }
       card.append(actions);
       list.append(card);
     }
@@ -90,11 +105,12 @@
     if (invite && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(invite)) {
       invited = await rpc("ping_list_practices", { p_id: invite });
     }
+    const combined = [...invited, ...rows.filter(row => !invited.some(item => item.id === row.id))];
+    const availability = combined.length ? await rpc("ping_practice_availability", { p_ids: combined.map(row => row.id) }) : [];
     if (!current(id, generation)) return;
     list.replaceChildren();
     if (invite && !invited.length) line(list, "Invitation introuvable, expirée ou indisponible.");
-    const combined = [...invited, ...rows.filter(row => !invited.some(item => item.id === row.id))];
-    renderSessions(combined, id, "Aucune séance à afficher. Active les alertes pour voir les demandes.");
+    renderSessions(combined, new Map(availability.map(item => [item.id, item])), id, "Aucune séance à afficher. Active les alertes pour voir les demandes.");
   }
   async function loadPreferences(id, generation) {
     const rows = await rpc("ping_my_practice_preferences");
@@ -193,10 +209,11 @@
       const params = {
         p_title: f.get("title").trim(), p_starts_at: date.toISOString(), p_city: f.get("city").trim(),
         p_venue: f.get("venue").trim(), p_goal: f.get("goal"), p_wheelchair: f.get("wheelchair"),
-        p_fee: f.get("fee").trim(), p_equipment: f.get("equipment"), p_changing: f.get("changing"), p_beginners: f.get("beginners")
+        p_fee: f.get("fee").trim(), p_equipment: f.get("equipment"), p_changing: f.get("changing"), p_beginners: f.get("beginners"),
+        p_capacity: Number(f.get("capacity"))
       };
-      if (!confirm(`Publier cette séance auprès des comptes ayant activé les alertes ? Son lien permettra aussi à toute personne connectée de la voir et de le partager.\n\n${params.p_title}\n${date.toLocaleString("fr-FR")}\n${params.p_city} · ${params.p_venue}\n${goals[params.p_goal]}\nTarif : ${params.p_fee}\nAccès fauteuil : ${yesNo[params.p_wheelchair]} ; prêt : ${yesNo[params.p_equipment]} ; vestiaires : ${yesNo[params.p_changing]} ; débutants : ${yesNo[params.p_beginners]}`)) return;
-      const practiceId = await rpc("ping_create_practice", params);
+      if (!confirm(`Publier cette séance auprès des comptes ayant activé les alertes ? Son lien permettra aussi à toute personne connectée de la voir et de le partager.\n\n${params.p_title}\n${date.toLocaleString("fr-FR")}\n${params.p_city} · ${params.p_venue}\n${goals[params.p_goal]}\nPlaces pour d’autres joueurs : ${params.p_capacity}\nTarif : ${params.p_fee}\nAccès fauteuil : ${yesNo[params.p_wheelchair]} ; prêt : ${yesNo[params.p_equipment]} ; vestiaires : ${yesNo[params.p_changing]} ; débutants : ${yesNo[params.p_beginners]}`)) return;
+      const practiceId = await rpc("ping_create_practice_with_capacity", params);
       if (!current(id, generation)) return;
       create.reset();
       $("#practice-link").value = invitation(practiceId);
