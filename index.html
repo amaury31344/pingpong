@@ -4,6 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#10233b">
+  <meta name="description" content="Ping Points : suis tes matchs de tennis de table, tes points estimés et tes progrès dans une application indépendante de la FFTT.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://ping-points.vercel.app/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Ping Points — ton parcours de pongiste">
+  <meta property="og:description" content="Suis tes matchs, tes points estimés et tes progrès au tennis de table.">
+  <meta property="og:url" content="https://ping-points.vercel.app/">
+  <meta property="og:image" content="https://ping-points.vercel.app/icon-512.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Ping Points">
   <title>Ping Points — ton parcours de pongiste</title>
@@ -203,8 +211,13 @@
         <article class="panel profile-panel">
           <form id="profile-form" class="form-grid">
             <div class="wide profile-photo-area">
-              <img id="profile-photo-preview" class="profile-photo-preview" alt="Aperçu de ta photo de profil" hidden>
-              <div><label for="profile-photo-file">Photo de profil <span>facultative</span></label><input id="profile-photo-file" type="file" accept="image/jpeg,image/png,image/webp"><button id="profile-photo-remove" class="btn btn-outline" type="button" hidden>Retirer la photo</button><p id="profile-photo-status" class="form-help" role="status" aria-live="polite">JPEG, PNG ou WebP, 5 Mo maximum. La photo sera recadrée au centre.</p></div>
+              <label class="profile-photo-pick">
+                <input id="profile-photo-file" type="file" accept="image/jpeg,image/png,image/webp" aria-label="Choisir ou modifier ma photo de profil">
+                <span id="profile-photo-placeholder" class="profile-photo-placeholder" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+                <img id="profile-photo-preview" class="profile-photo-preview" alt="" hidden>
+                <span class="profile-photo-edit" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="12.5" r="3"/></svg></span>
+              </label>
+              <div><strong>Photo de profil <span>facultative</span></strong><p class="form-help">Appuie sur le cercle pour choisir ou modifier ta photo.</p><button id="profile-photo-remove" class="btn btn-outline" type="button" hidden>Retirer la photo</button><p id="profile-photo-status" class="form-help" role="status" aria-live="polite">JPEG, PNG ou WebP, 5 Mo maximum. La photo sera recadrée au centre.</p></div>
             </div>
             <label>Prénom<input name="firstName" required maxlength="80" autocomplete="given-name" placeholder="Ton prénom"></label>
             <label>Nom<input name="lastName" required maxlength="80" autocomplete="family-name" placeholder="Ton nom"></label>

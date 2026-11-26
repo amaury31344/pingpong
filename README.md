@@ -15,6 +15,8 @@ L'interface est adaptée aux petits écrans et dispose d'un manifeste d'applicat
 
 La rubrique « Partager et installer » permet de partager ou copier uniquement l'adresse publique du site, sans données personnelles. Elle propose les étapes pour iPhone et Android ainsi qu'un bouton d'installation lorsque le navigateur le permet. Si la copie automatique échoue, l'adresse reste sélectionnable manuellement.
 
+Le site fournit une description, une URL canonique, `robots.txt` et `sitemap.xml` pour les moteurs de recherche. Leur exploration, l'indexation et la position des résultats restent à la discrétion des moteurs et ne sont pas garanties.
+
 `localhost` et `127.0.0.1` désignent l'appareil en cours : l'adresse affichée sur l'ordinateur n'est pas directement celle du téléphone. Un déploiement HTTPS accessible depuis le téléphone est nécessaire pour tester l'installation et le mode hors ligne sur celui-ci. Après une première visite complète en ligne, le service worker met en cache les fichiers de l'application ; la connexion et les copies en ligne nécessitent le réseau. Les données locales restent propres à chaque navigateur ou installation et peuvent être exportées puis restaurées depuis le profil. Ne pas partager le fichier de sauvegarde publiquement : il contient potentiellement des données personnelles.
 
 ## Compte et sauvegarde en ligne

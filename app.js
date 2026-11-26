@@ -166,6 +166,7 @@ function renderDirectory() {
 function renderPhotoPreview() {
   const preview = $("#profile-photo-preview");
   preview.hidden = !pendingPhoto;
+  $("#profile-photo-placeholder").hidden = Boolean(pendingPhoto);
   if (pendingPhoto) preview.src = pendingPhoto;
   else preview.removeAttribute("src");
   $("#profile-photo-remove").hidden = !pendingPhoto;
