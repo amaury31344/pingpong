@@ -53,6 +53,7 @@
       <a href="#amis" class="nav-item" data-page="amis"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h6"/></svg></span> Amis et messages</a>
       <a href="#seances" class="nav-item" data-page="seances"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h3"/></svg></span> Séances</a>
       <a href="#arcade" class="nav-item" data-page="arcade"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="5"/><path d="M7 13h4m-2-2v4m7-3h.01m2 3h.01"/></svg></span> Ping Arcade</a>
+      <a href="#club" class="nav-item" data-page="club"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-6h6v6M9 10h.01M15 10h.01"/></svg></span> Mon club</a>
       <a href="#profil" class="nav-item" data-page="profil"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span> Mon profil</a>
       <a href="#partager" class="nav-item" data-page="partager"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="m8 11 8-5M8 13l8 5"/></svg></span> Partager et installer</a>
     </nav>
@@ -68,7 +69,7 @@
     <a href="#joueurs" data-mobile-page="joueurs"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v1"/></svg>Joueurs</a>
     <a href="#amis" data-mobile-page="amis"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4zM8 9h8M8 12h6"/></svg>Messages</a>
     <details id="mobile-more"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>Plus</summary>
-      <div class="mobile-more-menu"><a href="#seances" data-mobile-page="seances">Séances</a><a href="#arcade" data-mobile-page="arcade">Ping Arcade</a><a href="#profil" data-mobile-page="profil">Mon profil</a><a href="#partager" data-mobile-page="partager">Partager et installer</a></div>
+      <div class="mobile-more-menu"><a href="#seances" data-mobile-page="seances">Séances</a><a href="#arcade" data-mobile-page="arcade">Ping Arcade</a><a href="#club" data-mobile-page="club">Mon club</a><a href="#profil" data-mobile-page="profil">Mon profil</a><a href="#partager" data-mobile-page="partager">Partager et installer</a></div>
     </details>
   </nav>
 
@@ -299,6 +300,24 @@
             <div><h4>Android · Chrome</h4><p>Ouvre le menu ⋮, puis choisis « Installer l’application » ou « Ajouter à l’écran d’accueil » et confirme.</p></div>
           </div>
           <p class="form-help">Les menus peuvent varier selon le navigateur. Les données locales ne sont pas automatiquement transférées vers l’application installée : utilise la sauvegarde dans Mon profil si nécessaire.</p>
+        </article>
+      </section>
+
+      <section id="club" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">TON CLUB</span><h2>Mon club</h2><p>Retrouve un club affilié grâce à l’annuaire officiel FFTT et indique ton club.</p></div></div>
+        <article class="panel profile-panel">
+          <form id="my-club-form" class="form-grid">
+            <label class="wide" for="my-club">Mon club <span>facultatif</span><input id="my-club" maxlength="100" autocomplete="organization" placeholder="Nom de ton club"></label>
+            <p class="form-help wide">Cherche ton club sur la carte officielle, puis saisis son nom ici. La saisie dans Ping Points ne vérifie pas automatiquement l’affiliation.</p>
+            <p id="my-club-saved" class="form-help wide" role="status"></p>
+            <div class="wide feature-actions"><button class="btn btn-primary" type="submit">Enregistrer mon club</button><a href="#profil" class="btn btn-outline">Créer ou modifier mon profil</a></div>
+            <p class="form-help wide">Le club est enregistré dans ton profil sur cet appareil. La sauvegarde en ligne et le partage public restent manuels.</p>
+          </form>
+        </article>
+        <article class="panel profile-panel backup-panel">
+          <h3>Trouver un club FFTT</h3>
+          <p class="form-help">La carte officielle de la FFTT permet de chercher les clubs affiliés par lieu. Elle s’ouvre sur le site de la fédération.</p>
+          <div class="backup-actions"><a class="btn btn-outline" href="https://carte.fftt.com/" target="_blank" rel="noopener noreferrer">Ouvrir la carte officielle FFTT</a></div>
         </article>
       </section>
 

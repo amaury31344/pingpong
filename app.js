@@ -176,6 +176,7 @@ function renderPhotoPreview() {
 function render(refreshForms = false) {
   if (!data) return;
   const profile = data.profile;
+  $("#my-club-saved").textContent = profile ? (profile.club ? `Club enregistré : ${profile.club}` : "Aucun club enregistré.") : "Crée d’abord ton profil pour enregistrer ton club.";
   $("#header-avatar").textContent = profile ? initials(`${profile.firstName} ${profile.lastName}`) : "?";
   if (profile?.photo && PingProfilePhoto.isValid(profile.photo)) {
     const image = document.createElement("img");
@@ -214,6 +215,8 @@ function render(refreshForms = false) {
       : `Cible de ${number(data.goalTarget.points)} points estimés atteinte ; échéance : ${dateLabel(data.goalTarget.dueDate)}.`;
   }
   if (refreshForms) {
+    $("#my-club-form").reset();
+    $("#my-club").value = profile?.club || "";
     $("#profile-form").reset();
     if (profile) {
       for (const [key, value] of Object.entries(profile)) {
@@ -275,7 +278,7 @@ function renderFilteredMatches(matches = chronological(data.matches).reverse()) 
 }
 
 function navigate() {
-  const allowed = { accueil: "Tableau de bord", matchs: "Mes matchs", joueurs: "Trouver des joueurs", amis: "Amis et messages", seances: "Séances et partenaires", arcade: "Ping Arcade", profil: "Mon profil", partager: "Partager et installer" };
+  const allowed = { accueil: "Tableau de bord", matchs: "Mes matchs", joueurs: "Trouver des joueurs", amis: "Amis et messages", seances: "Séances et partenaires", arcade: "Ping Arcade", club: "Mon club", profil: "Mon profil", partager: "Partager et installer" };
   const requested = location.hash.slice(1);
   const page = Object.hasOwn(allowed, requested) ? requested : "accueil";
   document.querySelectorAll(".page").forEach(section => { section.hidden = section.id !== page; });
@@ -474,9 +477,25 @@ $("#profile-form").addEventListener("submit", event => {
   const firstName = form.get("firstName").trim(), lastName = form.get("lastName").trim();
   if (!firstName || !lastName) return showNotice("Indique ton prénom et ton nom.", true);
   const profile = { firstName, lastName, license: form.get("license").trim(), club: form.get("club").trim(), city: form.get("city").trim(), startingPoints: Number(form.get("startingPoints")), bio: form.get("bio").trim(), photo: pendingPhoto };
+  const previousClub = data.profile?.club || "";
   if (save({ ...data, profile })) {
+    if ($("#my-club").value.trim() === previousClub) $("#my-club").value = profile.club;
     $("#profile-draft-status").textContent = "Profil enregistré sur cet appareil. La copie en ligne reste manuelle.";
     render(); showNotice("Ton profil a été enregistré sur cet appareil.");
+  }
+});
+
+$("#my-club-form").addEventListener("submit", event => {
+  event.preventDefault();
+  if (!data) return showNotice("Les données enregistrées sont illisibles.", true);
+  if (!data.profile) return showNotice("Crée d’abord ton profil dans Mon profil pour enregistrer ton club.", true);
+  const previousClub = data.profile.club || "";
+  const club = $("#my-club").value.trim();
+  if (save({ ...data, profile: { ...data.profile, club } })) {
+    if ($("#profile-club").value.trim() === previousClub) $("#profile-club").value = club;
+    else $("#profile-draft-status").textContent = "Le club a été enregistré séparément ; vérifie le club non enregistré dans ce formulaire avant de sauvegarder ton profil.";
+    render();
+    showNotice("Ton club a été enregistré sur cet appareil.");
   }
 });
 
