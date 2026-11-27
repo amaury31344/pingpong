@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10233b">
+  <meta name="description" content="Ping Points : suis tes matchs de tennis de table, tes points estimés et tes progrès dans une application indépendante de la FFTT.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://ping-points.vercel.app/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Ping Points — ton parcours de pongiste">
+  <meta property="og:site_name" content="Ping Points">
+  <meta property="og:description" content="Suis tes matchs, tes points estimés et tes progrès au tennis de table.">
+  <meta property="og:url" content="https://ping-points.vercel.app/">
+  <meta property="og:image" content="https://ping-points.vercel.app/icon-512.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Ping Points">
+  <title>Ping Points — matchs et points de tennis de table</title>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebSite","name":"Ping Points","url":"https://ping-points.vercel.app/","inLanguage":"fr"}
+  </script>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="ranking.js"></script>
+  <script defer src="competition.js"></script>
+  <script defer src="sports.js"></script>
+  <script defer src="profile-photo.js"></script>
+  <script defer src="backup.js"></script>
+  <script defer src="app.js"></script>
+  <script defer src="suggestions.js"></script>
+  <script defer src="share.js"></script>
+  <script defer src="cloud-client.bundle.js"></script>
+  <script defer src="cloud.js"></script>
+  <script defer src="notifications.js"></script>
+  <script defer src="directory-core.js"></script>
+  <script defer src="directory.js"></script>
+  <script defer src="social.js"></script>
+  <script defer src="calendar.js"></script>
+  <script defer src="practice.js"></script>
+  <script defer src="arcade-engine.js"></script>
+  <script defer src="arcade.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#accueil"><span class="brand-mark" aria-hidden="true"></span><span>ping<span class="brand-accent">points</span><small>LE PING, ENSEMBLE</small></span></a>
+    <p class="nav-label">TON ESPACE</p>
+    <nav aria-label="Navigation principale">
+      <a href="#accueil" class="nav-item" data-page="accueil"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg></span> Tableau de bord</a>
+      <a href="#matchs" class="nav-item" data-page="matchs"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span> Mes matchs</a>
+      <a href="#joueurs" class="nav-item" data-page="joueurs"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v1"/></svg></span> Trouver des joueurs</a>
+      <a href="#amis" class="nav-item" data-page="amis"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h6"/></svg></span> Amis et messages</a>
+      <a href="#seances" class="nav-item" data-page="seances"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h3"/></svg></span> Séances</a>
+      <a href="#arcade" class="nav-item" data-page="arcade"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="5"/><path d="M7 13h4m-2-2v4m7-3h.01m2 3h.01"/></svg></span> Ping Arcade</a>
+      <a href="#club" class="nav-item" data-page="club"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-6h6v6M9 10h.01M15 10h.01"/></svg></span> Mon club</a>
+      <a href="#profil" class="nav-item" data-page="profil"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span> Mon profil</a>
+      <a href="#partager" class="nav-item" data-page="partager"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="m8 11 8-5M8 13l8 5"/></svg></span> Partager et installer</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <span class="status-dot"></span>
+      <div><strong>Ton espace personnel</strong><small>Enregistré sur cet appareil</small></div>
+    </div>
+  </aside>
+
+  <nav class="mobile-nav" aria-label="Navigation mobile">
+    <a href="#accueil" data-mobile-page="accueil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg>Accueil</a>
+    <a href="#matchs" data-mobile-page="matchs"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Matchs</a>
+    <a href="#joueurs" data-mobile-page="joueurs"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v1"/></svg>Joueurs</a>
+    <a href="#amis" data-mobile-page="amis"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4zM8 9h8M8 12h6"/></svg>Messages</a>
+    <details id="mobile-more"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>Plus</summary>
+      <div class="mobile-more-menu"><a href="#seances" data-mobile-page="seances">Séances</a><a href="#arcade" data-mobile-page="arcade">Ping Arcade</a><a href="#club" data-mobile-page="club">Mon club</a><a href="#profil" data-mobile-page="profil">Mon profil</a><a href="#partager" data-mobile-page="partager">Partager et installer</a></div>
+    </details>
+  </nav>
+
+  <main>
+    <header class="topbar">
+      <div><span class="eyebrow">TON ESPACE PONGISTE</span><h1 id="page-title">Tableau de bord</h1></div>
+      <div class="top-actions"><span class="local-pill"><span class="status-dot"></span> Données locales</span><a class="avatar small" href="#profil" id="header-avatar" aria-label="Modifier mon profil">?</a></div>
+    </header>
+
+    <div class="page-wrap">
+      <div id="notice" class="notice" role="status" hidden></div>
+      <section id="accueil" class="page">
+        <div class="hero">
+          <div class="hero-copy"><span class="hero-tag"><span></span> TON SUIVI PERSONNEL</span><h2>Chaque match<br><em>compte.</em></h2><p>Suis tes matchs de tennis de table, tes points estimés et retrouve des partenaires au même endroit.</p><div class="hero-actions"><a class="btn btn-white" href="#matchs">＋ Ajouter un match</a><a class="btn btn-ghost" href="#profil">Compléter mon profil →</a></div></div>
+          <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="paddle"><div class="paddle-face"></div><div class="paddle-handle"></div></div><div class="ball"></div></div>
+        </div>
+        <div class="section-title"><div><span class="eyebrow">TON PARCOURS</span><h2>Vue d’ensemble</h2></div><a href="#profil" class="text-link">Modifier mon profil →</a></div>
+        <div class="stats-grid">
+          <article class="stat-card"><span class="stat-icon blue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 17 10 11l4 4 6-7M15 8h5v5"/></svg></span><p>Points estimés</p><strong id="points">—</strong><span id="points-detail">Renseigne ton point de départ</span></article>
+          <article class="stat-card"><span class="stat-icon amber" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><p>Matchs joués</p><strong id="played">0</strong><span id="played-detail">Aucun match pour le moment</span></article>
+          <article class="stat-card"><span class="stat-icon green" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg></span><p>Victoires</p><strong id="wins">0</strong><span id="wins-detail">Prêt pour le prochain match ?</span></article>
+          <article class="stat-card"><span class="stat-icon violet" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg></span><p>Réussite</p><strong id="win-rate">—</strong><span>Sur les matchs enregistrés</span></article>
+        </div>
+        <article class="panel home-next"><div><h3>Prochaine séance</h3><p id="home-next-practice">Connecte-toi pour voir tes séances.</p></div><a href="#seances" class="text-link">Voir les séances →</a></article>
+        <div class="content-grid">
+          <article class="panel"><div class="panel-head"><div><span class="eyebrow">TON ÉVOLUTION</span><h3>Progression des points</h3></div><span class="subtle-tag">Estimation</span></div><div id="chart" class="chart"></div><p id="chart-equipment" class="chart-note" hidden></p><p class="chart-note">Calcul indicatif, hors dérive et ajustements FFTT. Les matchs amicaux ne comptent pas.</p></article>
+          <article class="panel"><div class="panel-head"><div><span class="eyebrow">EN CE MOMENT</span><h3>Forme récente</h3></div><a href="#matchs" class="text-link">Voir tout →</a></div><div id="recent" class="recent-list"></div></article>
+        </div>
+        <article class="panel"><div class="panel-head"><div><span class="eyebrow">LES DERNIERS ÉCHANGES</span><h3>Derniers matchs</h3></div><button class="btn btn-outline add-match" type="button">＋ Ajouter</button></div><div id="recent-matches"></div></article>
+        <details class="home-secondary"><summary>Objectif, matériel et carte souvenir</summary>
+        <article class="panel goal-panel"><div class="panel-head"><div><span class="eyebrow">MOTIVATION</span><h3>Mon objectif personnel</h3></div></div><form id="goal-form" class="goal-form"><label for="goal-input">Ce que je souhaite travailler</label><input id="goal-input" maxlength="160" placeholder="Ex. améliorer ma régularité en remise"><div class="form-grid goal-target"><label>Points estimés à atteindre <span>facultatif</span><input id="goal-target" type="number" step="0.01" min="0" max="5000" placeholder="Ex. 600"></label><label>Échéance <span>nécessaire si objectif chiffré</span><input id="goal-date" type="date"></label></div><div class="goal-actions"><button class="btn btn-primary" type="submit">Enregistrer</button></div><p id="goal-progress" class="form-help" aria-live="polite"></p><p class="form-help">Estimation personnelle : la progression n’est pas garantie et ce n’est pas un classement officiel.</p></form></article>
+        <article class="panel feature-panel">
+          <div class="panel-head"><div><span class="eyebrow">TON ÉQUIPEMENT</span><h3>Mon carnet de matériel</h3></div></div>
+          <div class="feature-content">
+            <p class="form-help">Note les changements de raquette ou de revêtement. Un changement de matériel ne prouve pas la cause d’une évolution.</p>
+            <form id="equipment-form" class="form-grid">
+              <label>Matériel<select name="kind"><option value="racket">Raquette</option><option value="forehand">Revêtement coup droit</option><option value="backhand">Revêtement revers</option></select></label>
+              <label>Nom ou modèle<input name="name" maxlength="100" required placeholder="Ex. mon nouveau bois"></label>
+              <label>Date du changement<input name="date" type="date" required></label>
+              <label>Note personnelle <span>facultatif</span><input name="notes" maxlength="280" placeholder="Mes premières sensations"></label>
+              <div class="wide feature-actions"><button class="btn btn-primary" type="submit" id="equipment-submit">Ajouter au carnet</button><button class="btn btn-outline" type="button" id="equipment-cancel" hidden>Annuler la modification</button></div>
+            </form>
+            <div id="equipment-list"></div>
+          </div>
+        </article>
+        <article class="panel feature-panel">
+          <div class="panel-head"><div><span class="eyebrow">TON PARCOURS À PARTAGER</span><h3>Ma carte souvenir</h3></div></div>
+          <div class="feature-content">
+            <p class="form-help">Choisis une période et les informations à afficher. La carte ne contient pas automatiquement ton nom, ta licence, tes contacts ou les noms de tes adversaires. Elle est créée sur cet appareil.</p>
+            <form id="souvenir-form" class="form-grid">
+              <label>Du<input name="from" type="date" required></label>
+              <label>Au<input name="to" type="date" required></label>
+              <label class="feature-check"><input name="stats" type="checkbox" checked> Afficher mes matchs et mon bilan</label>
+              <label class="feature-check"><input name="delta" type="checkbox" checked> Afficher ma variation estimée</label>
+              <label class="wide">Mon meilleur souvenir <span>facultatif, visible sur la carte</span><input name="memory" maxlength="120" placeholder="Sans nommer d’autres personnes sans leur accord"></label>
+              <div class="wide"><button class="btn btn-primary" type="submit">Créer mon aperçu</button></div>
+            </form>
+            <div id="souvenir-preview" class="souvenir-preview" hidden aria-live="polite">
+              <span class="souvenir-brand">PING POINTS · CARTE SOUVENIR</span>
+              <h4>Mon parcours</h4>
+              <p id="souvenir-period"></p><p id="souvenir-stats"></p><p id="souvenir-delta"></p><p id="souvenir-memory"></p>
+              <p class="souvenir-disclaimer">Estimation personnelle, non officielle. Hors dérive et ajustements FFTT.</p>
+            </div>
+            <div class="feature-actions"><button id="souvenir-download" class="btn btn-outline" type="button" hidden>Télécharger l’image</button></div>
+          </div>
+        </article>
+        </details>
+      </section>
+
+      <section id="matchs" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">TON HISTORIQUE</span><h2>Mes matchs</h2><p>Renseigne tes rencontres pour suivre ta progression.</p></div><button class="btn btn-primary add-match" type="button">＋ Ajouter un match</button></div>
+        <div class="info-box">Pour un match officiel, saisis les points de référence de la période pour les deux joueurs et le coefficient de l’épreuve. Les matchs amicaux ne modifient pas les points.</div>
+        <div class="backup-actions"><button id="show-friendly-matches" class="btn btn-outline" type="button">Voir mes matchs amicaux</button><button id="show-all-matches" class="btn btn-outline" type="button">Voir tous mes matchs</button></div>
+        <div class="filters"><label>Type<select id="filter-kind"><option value="all">Tous les matchs</option><option value="official">Compétition</option><option value="friendly">Amical</option><option value="legacy">Ancienne saisie</option></select></label><label>Résultat<select id="filter-result"><option value="all">Tous</option><option value="win">Victoires</option><option value="loss">Défaites</option></select></label><label>Du<input id="filter-from" type="date"></label><label>Au<input id="filter-to" type="date"></label><p id="filter-summary" aria-live="polite"></p><p id="filter-levels"></p></div>
+        <article class="panel"><div id="all-matches"></div></article>
+        <article class="panel feature-panel">
+          <div class="panel-head"><div><h3>Journal des confrontations</h3><p class="form-help">Retrouve les matchs et les notes privées que tu as enregistrés contre un adversaire. Les noms doivent correspondre ; vérifie les homonymes.</p></div></div>
+          <div class="feature-content"><label for="confrontation-name">Nom exact de l’adversaire</label><input id="confrontation-name" list="confrontation-names" maxlength="120" placeholder="Nom de l’adversaire"><datalist id="confrontation-names"></datalist>
+          <p id="confrontation-summary" class="form-help" aria-live="polite"></p><div id="confrontation-results"></div></div>
+        </article>
+        <article class="panel feature-panel">
+          <div class="panel-head"><div><h3>Simulateur avant compétition</h3><p class="form-help">Estimation indépendante de la FFTT, sans dérive, bonus ni corrections officielles. Utilise les points de référence du début de période, pas les points virtuels après chaque match.</p></div></div>
+          <div class="feature-content"><form id="simulation-form" class="form-grid">
+            <label>Mes points de référence<input name="reference" type="number" min="0" max="5000" step="0.01" value="500" required></label>
+            <label>Coefficient de l’épreuve<select name="coefficient"><option value="1">1</option><option value="0.5">0,5</option><option value="0.75">0,75</option><option value="1.25">1,25</option><option value="1.5">1,5</option><option value="2">2</option></select></label>
+            <label class="wide">Adversaires : un par ligne, nom ; points<textarea name="opponents" rows="4" maxlength="3000" required placeholder="Alex ; 600&#10;Camille ; 550"></textarea></label>
+            <div class="wide"><button class="btn btn-primary" type="submit">Simuler</button></div>
+          </form><div id="simulation-result" aria-live="polite"></div></div>
+        </article>
+      </section>
+
+      <section id="joueurs" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">LA COMMUNAUTÉ</span><h2>Trouver des joueurs</h2><p>Recherche les joueurs Ping Points qui ont choisi de partager leur profil.</p></div></div>
+        <div class="info-box">Les profils publics sont visibles par tous. Les anciens profils partagés uniquement avec les comptes connectés restent limités à ces comptes. Les données sont déclarées par les joueurs et les points sont des estimations non officielles.</div>
+        <article class="panel directory">
+          <h3>Rechercher un joueur</h3>
+          <p id="online-directory-status" class="form-help" role="status" aria-live="polite">Recherche par nom public ou pseudonyme.</p>
+          <form id="online-directory-search" class="online-directory-search">
+            <label for="online-directory-query">Nom public du joueur</label>
+            <input id="online-directory-query" type="search" minlength="2" maxlength="80" required placeholder="Au moins 2 caractères">
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+          </form>
+          <div id="online-directory-results" aria-live="polite"></div>
+        </article>
+        <article class="panel directory feature-panel">
+          <h3>Partager mon profil</h3>
+          <p class="form-help">Après confirmation, ton profil est public et visible par tous, même sans compte. Les autres peuvent copier ces informations. N’indique pas de contact dans ton nom public ou ta bio. La licence, les coordonnées, les notes et les noms d’adversaires ne sont jamais envoyés.</p>
+          <p class="form-help">Les dates et résultats peuvent néanmoins permettre de reconnaître une rencontre. Tu peux retirer ton profil à tout moment ; cela ne supprime pas les copies déjà faites par d’autres.</p>
+          <p class="form-help">Ton profil partagé est un instantané : republie-le pour mettre à jour tes points ou tes matchs.</p>
+          <p id="directory-sharing-status" class="cloud-status" role="status" aria-live="polite">Connecte-toi depuis Mon profil pour partager.</p>
+          <div id="directory-own-profile"></div>
+          <form id="directory-publish" class="form-grid">
+            <label>Nom public ou pseudonyme<input name="name" minlength="2" maxlength="80" required placeholder="Nom à afficher"></label>
+            <div class="suggestion-field"><label for="directory-club">Club à partager <span>facultatif</span><input id="directory-club" name="club" maxlength="100" placeholder="Laisser vide pour ne pas partager" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="directory-club-options" aria-describedby="directory-club-status" autocomplete="off"></label><ul id="directory-club-options" class="suggestion-list" role="listbox" hidden></ul><p id="directory-club-status" class="form-help" role="status" aria-live="polite">Pour les suggestions, renseigne ta ville dans Mon profil : elle sera transmise aux services publics. Saisie libre possible.</p></div>
+            <label class="feature-check"><input name="points" type="checkbox"> Partager mes points estimés</label>
+            <label class="feature-check"><input name="stats" type="checkbox"> Partager mon nombre de matchs et mes victoires</label>
+            <label class="feature-check wide"><input name="matches" type="checkbox"> Partager les dates, types et résultats de mes 10 derniers matchs</label>
+            <label class="feature-check"><input name="bio" type="checkbox" checked> Partager ma bio enregistrée</label>
+            <label class="feature-check"><input name="photo" type="checkbox" checked> Partager ma photo enregistrée</label>
+            <label class="feature-check wide"><input name="consent" type="checkbox" required> J’ai au moins 18 ans et j’accepte de rendre ces informations publiques.</label>
+            <div class="wide feature-actions"><button class="btn btn-primary" type="submit">Vérifier et publier</button><button id="directory-unpublish" class="btn btn-outline" type="button">Rendre mon profil privé</button></div>
+          </form>
+        </article>
+        <article class="panel directory feature-panel">
+          <div class="panel-head"><div><h3>Mon répertoire personnel</h3><p class="form-help">Ces contacts restent sur cet appareil et ne sont pas publiés.</p></div><button class="btn btn-outline" id="add-player" type="button">＋ Ajouter</button></div>
+          <label for="directory-search">Rechercher par ville, club ou nom</label><input id="directory-search" type="search" placeholder="Ex. Lille, Loos Sport TT…"><div id="player-list"></div>
+        </article>
+      </section>
+
+      <section id="amis" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">LA COMMUNAUTÉ</span><h2>Amis et messages</h2><p>Accepte une demande pour discuter avec un joueur.</p></div></div>
+        <div class="info-box">La messagerie est réservée aux amis acceptés. Les messages ne sont pas chiffrés de bout en bout ; ton correspondant peut les copier. Tu peux signaler un message reçu : son contenu et les comptes concernés sont conservés pour examen. Le signalement ne bloque pas automatiquement. Bloquer ou retirer une relation supprime les messages enregistrés dans l’application pour vous deux, mais pas les signalements ni les copies externes.</div>
+        <article class="panel directory"><h3>Mes relations</h3><p id="social-status" class="form-help" role="status" aria-live="polite"></p><div class="backup-actions"><button id="social-refresh" class="btn btn-outline" type="button">Actualiser</button></div><div id="social-list"></div></article>
+        <article class="panel directory feature-panel" id="chat-panel" hidden>
+          <h3 id="chat-title">Discussion</h3><p id="chat-status" class="form-help" role="status" aria-live="polite"></p>
+          <div id="chat-messages" class="chat-messages" aria-live="polite"></div>
+          <form id="chat-form"><label for="chat-body">Message</label><textarea id="chat-body" maxlength="2000" rows="3" required placeholder="Écris ton message"></textarea><div class="backup-actions"><button class="btn btn-primary" type="submit">Envoyer</button><button id="chat-refresh" class="btn btn-outline" type="button">Actualiser la discussion</button><button id="chat-replay" class="btn btn-outline" type="button">Rejouer ensemble</button></div></form>
+        </article>
+      </section>
+
+      <section id="seances" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">JOUER ENSEMBLE</span><h2>Séances et partenaires</h2><p>Trouve des joueurs et propose une séance.</p></div></div>
+        <div class="info-box">Pilote réservé aux adultes déclarés. La liste des demandes est visible uniquement si tu actives les alertes dans l’application ; il n’y a pas de notification push ou d’e-mail. Ne publie pas de coordonnées privées. Les informations d’une séance peuvent être copiées ou retransmises.</div>
+        <article class="panel directory"><h3>Mes préférences</h3>
+          <p class="form-help">Les recommandations sont facultatives. Si tu les actives, les joueurs inscrits peuvent voir ton nom partagé, les jours et la période en commun, l’écart de niveau, l’objectif commun et une distance approximative. Ta position arrondie est stockée sur Supabase, mais ses coordonnées ne sont pas directement affichées aux autres. Une distance peut permettre de déduire une zone ; ne l’active pas si cela te gêne.</p>
+          <p id="practice-status" class="cloud-status" role="status" aria-live="polite">Connecte-toi depuis Mon profil.</p>
+          <form id="practice-preferences" class="form-grid">
+            <label class="feature-check wide"><input name="discoverable" type="checkbox"> Participer aux recommandations de partenaires</label>
+            <label class="feature-check wide"><input name="alerts" type="checkbox"> Voir les alertes de séances dans l’application</label>
+            <fieldset class="wide practice-days"><legend>Jours disponibles</legend>
+              <label><input type="checkbox" name="days" value="1"> Lun.</label><label><input type="checkbox" name="days" value="2"> Mar.</label><label><input type="checkbox" name="days" value="3"> Mer.</label><label><input type="checkbox" name="days" value="4"> Jeu.</label><label><input type="checkbox" name="days" value="5"> Ven.</label><label><input type="checkbox" name="days" value="6"> Sam.</label><label><input type="checkbox" name="days" value="7"> Dim.</label>
+            </fieldset>
+            <label>Période habituelle<select name="period"><option value="">Non renseignée</option><option value="morning">Matin</option><option value="afternoon">Après-midi</option><option value="evening">Soir</option></select></label>
+            <label>Objectif<select name="goal"><option value="">Non renseigné</option><option value="training">Entraînement</option><option value="competition">Compétition</option><option value="resume">Reprise tranquille</option><option value="leisure">Loisir</option></select></label>
+            <label>Niveau estimé en points <span>facultatif</span><input name="level" type="number" min="0" max="5000" step="0.01" placeholder="Ex. 500"></label>
+            <div class="wide"><div class="backup-actions"><button id="practice-location" class="btn btn-outline" type="button">Utiliser ma position approximative</button><button id="practice-location-clear" class="btn btn-outline" type="button">Effacer ma position</button></div><p id="practice-location-status" class="form-help">Aucune position choisie.</p></div>
+            <div class="wide"><button class="btn btn-primary" type="submit">Enregistrer mes choix</button></div>
+          </form>
+        </article>
+        <article class="panel directory feature-panel"><h3>Partenaires compatibles</h3><p class="form-help">Les critères communs sont expliqués, sans garantie de disponibilité. La proximité est approximative ; une donnée absente ne compte pas comme un accord.</p><label class="feature-check"><input id="practice-resume-only" type="checkbox"> Uniquement les joueurs en reprise tranquille</label><div class="backup-actions"><button id="practice-recommend" class="btn btn-outline" type="button">Actualiser les suggestions</button></div><div id="practice-recommendations"></div></article>
+        <article class="panel directory feature-panel"><h3>Il nous manque un joueur</h3><p class="form-help">Publier une séance la rend visible aux comptes ayant activé les alertes dans l’application. Toute personne connectée ayant son lien pourra aussi la consulter et le partager. Publie uniquement un lieu que tu acceptes de partager, jamais de numéro ni d’e-mail. Pour échanger, utilise les demandes d’amis et la messagerie. La ville saisie est transmise au service public de suggestions ; la saisie libre reste possible.</p>
+          <p id="practice-repeat-status" class="form-help" role="status" hidden></p>
+          <button id="practice-repeat-cancel" class="btn btn-outline" type="button" hidden>Annuler l’invitation en discussion</button>
+          <form id="practice-create" class="form-grid">
+            <label>Titre<input name="title" minlength="2" maxlength="100" required placeholder="Il nous manque un joueur"></label>
+            <label>Date et heure locales<input name="starts" type="datetime-local" required></label>
+            <div class="suggestion-field"><label for="practice-city">Ville<input id="practice-city" name="city" minlength="2" maxlength="100" required role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="practice-city-options" aria-describedby="practice-city-status" autocomplete="off"></label><ul id="practice-city-options" class="suggestion-list" role="listbox" hidden></ul><p id="practice-city-status" class="form-help" role="status" aria-live="polite">Saisis au moins 2 caractères ou un code postal.</p></div>
+            <label>Lieu partagé<input name="venue" minlength="2" maxlength="150" required placeholder="Nom de la salle"></label>
+            <label>Places pour d’autres joueurs<input name="capacity" type="number" min="1" max="30" step="1" value="1" required></label>
+            <label>Niveau minimum en points <span>facultatif</span><input name="levelMin" type="number" min="0" max="5000" step="1" placeholder="Ex. 500"></label>
+            <label>Niveau maximum en points <span>facultatif</span><input name="levelMax" type="number" min="0" max="5000" step="1" placeholder="Ex. 900"></label>
+            <label>Objectif<select name="goal"><option value="training">Entraînement</option><option value="competition">Compétition</option><option value="resume">Reprise tranquille</option><option value="leisure">Loisir</option></select></label>
+            <label>Tarif<input name="fee" maxlength="80" required placeholder="Gratuit, 5 €, inconnu…"></label>
+            <label>Accès fauteuil<select name="wheelchair"><option value="unknown">À confirmer</option><option value="yes">Oui</option><option value="no">Non</option></select></label>
+            <label>Prêt de raquette<select name="equipment"><option value="unknown">À confirmer</option><option value="yes">Oui</option><option value="no">Non</option></select></label>
+            <label>Vestiaires<select name="changing"><option value="unknown">À confirmer</option><option value="yes">Oui</option><option value="no">Non</option></select></label>
+            <label>Débutants accueillis<select name="beginners"><option value="unknown">À confirmer</option><option value="yes">Oui</option><option value="no">Non</option></select></label>
+            <div class="wide"><button class="btn btn-primary" type="submit">Vérifier et publier</button></div>
+          </form>
+        </article>
+        <article class="panel directory feature-panel"><h3>Séances et invitations</h3><p class="form-help">Les alertes sont affichées ici, jusqu’à 50 séances. Les notifications facultatives peuvent être activées dans Mon profil pendant que la page reste ouverte. Les places indiquées excluent l’organisateur. Tu peux participer ou annuler avant la séance ; l’application affiche le nombre de participants, sans leurs noms. Tes séances apparaissent en premier, y compris les séances passées pour que tu puisses les supprimer. Un lien d’invitation fonctionne pour les personnes connectées jusqu’à suppression de la séance ou sa date de début. Si tu n’es pas connecté, connecte-toi puis rouvre le lien.</p><div class="backup-actions"><button id="practice-refresh" class="btn btn-outline" type="button">Actualiser</button></div><div id="practice-list"></div><label for="practice-link">Lien d’invitation sélectionné</label><input id="practice-link" type="url" readonly placeholder="Sélectionne une séance"><div class="backup-actions"><button id="practice-copy" class="btn btn-outline" type="button">Copier le lien</button></div></article>
+      </section>
+
+      <section id="arcade" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">UNE PAUSE LUDIQUE</span><h2>Ping Arcade</h2><p>Une table, deux raquettes : à toi de gagner l’échange.</p></div></div>
+        <div class="info-box">Un jeu d’arcade indépendant de ton suivi sportif : les scores ne modifient ni tes matchs ni tes points FFTT. Ce jeu ne mesure pas ton niveau réel.</div>
+        <div class="arcade-layout">
+          <div class="panel arcade-game">
+            <div class="arcade-score" aria-label="Score"><div><span id="arcade-opponent-label">ORDINATEUR</span> <strong id="arcade-opponent-score">0</strong></div><span id="arcade-score-label">À 11 POINTS · 2 D’ÉCART</span><div><span id="arcade-player-label">TOI</span> <strong id="arcade-player-score">0</strong></div></div>
+            <div id="arcade-partner-touch" class="arcade-touch arcade-partner-touch" aria-label="Zone tactile pour déplacer la raquette du joueur du haut" hidden>↔ &nbsp; Joueur du haut : glisse ici</div>
+            <canvas id="arcade-canvas" width="720" height="1000" role="img" aria-label="Table de jeu vue du dessus, raquette du joueur en bas et adversaire ou partenaire en haut. Le score et l’état sont indiqués hors du terrain."></canvas>
+            <div id="arcade-touch" class="arcade-touch" aria-label="Zone tactile pour déplacer la raquette">↔ &nbsp; Glisse ici pour déplacer ta raquette</div>
+            <div id="arcade-status" class="arcade-status" role="status" aria-live="polite">Choisis tes réglages puis lance une partie.</div>
+            <div class="arcade-buttons"><button id="arcade-start" type="button" class="btn btn-primary">Lancer la partie</button><button id="arcade-pause" type="button" class="btn btn-outline" disabled>Pause</button><button id="arcade-quit" type="button" class="btn btn-outline" disabled>Quitter</button></div>
+          </div>
+          <aside class="panel arcade-settings">
+            <h3>Réglages de la partie</h3>
+            <label for="arcade-mode">Mode</label>
+            <select id="arcade-mode"><option value="solo">Contre l’ordinateur</option><option value="coop">Défi coopératif à deux</option></select>
+            <p id="arcade-coop-help" class="form-help" hidden>Ensemble, prolongez l’échange ! Sur mobile, chaque joueur glisse dans sa zone tactile ; vous pouvez jouer en même temps sur le même écran. Au clavier : flèches ← → en bas, touches A et D en haut. Aucun point contre un partenaire.</p>
+            <label for="arcade-difficulty">Difficulté</label>
+            <select id="arcade-difficulty"><option value="easy">Facile</option><option value="normal" selected>Normal</option><option value="hard">Difficile</option></select>
+            <p class="form-help">Facile : réaction lente, déplacement lent. Normal : intermédiaire. Difficile : réaction rapide, déplacement rapide.</p>
+            <label for="arcade-control">Commande</label>
+            <select id="arcade-control"><option value="keyboard">Clavier : flèches ← →</option><option value="mouse">Souris : sur la table</option><option value="touch">Tactile : zone sous la table</option></select>
+            <label class="check-label"><input id="arcade-discovery" type="checkbox"> Mode découverte : balle plus lente</label>
+            <label class="check-label"><input id="arcade-sound" type="checkbox"> Activer les sons facultatifs</label>
+            <p class="form-help">Match en 11 points avec deux points d’écart. Les rebonds sur les côtés sont une convention arcade. Le record personnel dépend de la difficulté, du mode découverte et de la commande.</p>
+            <p id="arcade-record" class="arcade-record">Record : —</p>
+            <p class="form-help">Le résultat dépend aussi de ton écran et de ton navigateur. Aucune information ne dépend du son ou de la couleur.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section id="partager" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">PING POINTS ENSEMBLE</span><h2>Partager et installer</h2><p>Invite d’autres pongistes et garde l’application à portée de main.</p></div></div>
+        <article class="panel share-panel">
+          <h3>Partager Ping Points</h3>
+          <p class="form-help">Seul le lien du site est partagé, jamais ton profil ou tes matchs.</p>
+          <label for="share-link">Lien du site</label>
+          <input id="share-link" type="url" value="https://ping-points.vercel.app/" readonly>
+          <div class="backup-actions"><button id="share-app" class="btn btn-primary" type="button" hidden>Partager le lien</button><button id="copy-app-link" class="btn btn-outline" type="button">Copier le lien</button></div>
+          <p id="share-status" class="share-status" role="status" aria-live="polite"></p>
+        </article>
+        <article class="panel share-panel">
+          <h3>Installer sur ton téléphone</h3>
+          <p class="form-help">Ouvre <a href="https://ping-points.vercel.app/">ping-points.vercel.app</a> sur ton téléphone. L’installation ajoute une icône à ton écran d’accueil ; l’application n’est pas dans l’App Store ou Google Play.</p>
+          <button id="install-app" class="btn btn-primary" type="button" hidden>Installer Ping Points</button>
+          <p id="install-status" class="share-status" role="status" aria-live="polite"></p>
+          <div class="install-steps">
+            <div><h4>iPhone ou iPad · Safari</h4><p>Appuie sur le bouton Partager, puis sur « Sur l’écran d’accueil » et enfin « Ajouter ».</p></div>
+            <div><h4>Android · Chrome</h4><p>Ouvre le menu ⋮, puis choisis « Installer l’application » ou « Ajouter à l’écran d’accueil » et confirme.</p></div>
+          </div>
+          <p class="form-help">Les menus peuvent varier selon le navigateur. Les données locales ne sont pas automatiquement transférées vers l’application installée : utilise la sauvegarde dans Mon profil si nécessaire.</p>
+        </article>
+      </section>
+
+      <section id="club" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">TON CLUB</span><h2>Mon club</h2><p>Retrouve un club affilié grâce à l’annuaire officiel FFTT et indique ton club.</p></div></div>
+        <article class="panel profile-panel">
+          <form id="my-club-form" class="form-grid">
+            <label class="wide" for="my-club">Mon club <span>facultatif</span><input id="my-club" maxlength="100" autocomplete="organization" placeholder="Nom de ton club"></label>
+            <p class="form-help wide">Cherche ton club sur la carte officielle, puis saisis son nom ici. La saisie dans Ping Points ne vérifie pas automatiquement l’affiliation.</p>
+            <p id="my-club-saved" class="form-help wide" role="status"></p>
+            <div class="wide feature-actions"><button class="btn btn-primary" type="submit">Enregistrer mon club</button><a href="#profil" class="btn btn-outline">Créer ou modifier mon profil</a></div>
+            <p class="form-help wide">Le club est enregistré dans ton profil sur cet appareil. La sauvegarde en ligne et le partage public restent manuels.</p>
+          </form>
+        </article>
+        <article class="panel profile-panel backup-panel">
+          <h3>Trouver un club FFTT</h3>
+          <p class="form-help">La carte officielle de la FFTT permet de chercher les clubs affiliés par lieu. Elle s’ouvre sur le site de la fédération.</p>
+          <div class="backup-actions"><a class="btn btn-outline" href="https://carte.fftt.com/" target="_blank" rel="noopener noreferrer">Ouvrir la carte officielle FFTT</a></div>
+        </article>
+      </section>
+
+      <section id="profil" class="page" hidden>
+        <div class="section-title"><div><span class="eyebrow">TON IDENTITÉ</span><h2>Mon profil</h2><p>Personnalise ton espace et définis ton point de départ.</p></div></div>
+        <article class="panel profile-panel">
+          <form id="profile-form" class="form-grid">
+            <div class="wide profile-photo-area">
+              <label class="profile-photo-pick">
+                <input id="profile-photo-file" type="file" accept="image/jpeg,image/png,image/webp" aria-label="Choisir ou modifier ma photo de profil">
+                <span id="profile-photo-placeholder" class="profile-photo-placeholder" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+                <img id="profile-photo-preview" class="profile-photo-preview" alt="" hidden>
+                <span class="profile-photo-edit" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="12.5" r="3"/></svg></span>
+              </label>
+              <div><strong>Photo de profil <span>facultative</span></strong><p class="form-help">Appuie sur le cercle pour choisir ou modifier ta photo.</p><button id="profile-photo-remove" class="btn btn-outline" type="button" hidden>Retirer la photo</button><p id="profile-photo-status" class="form-help" role="status" aria-live="polite">JPEG, PNG ou WebP, 5 Mo maximum. La photo sera recadrée au centre.</p></div>
+            </div>
+            <label>Prénom<input name="firstName" required maxlength="80" autocomplete="given-name" placeholder="Ton prénom"></label>
+            <label>Nom<input name="lastName" required maxlength="80" autocomplete="family-name" placeholder="Ton nom"></label>
+            <label>Numéro de licence <span>facultatif</span><input name="license" maxlength="30" placeholder="Ton numéro FFTT"></label>
+            <div class="suggestion-field"><label for="profile-city">Ville <span>facultatif</span><input id="profile-city" name="city" maxlength="100" autocomplete="off" placeholder="Ta ville" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="profile-city-options" aria-describedby="profile-city-status"></label><ul id="profile-city-options" class="suggestion-list" role="listbox" hidden></ul><p id="profile-city-status" class="form-help" role="status" aria-live="polite">Saisis au moins 2 caractères ou un code postal.</p></div>
+            <div class="suggestion-field"><label for="profile-club">Club <span>facultatif</span><input id="profile-club" name="club" maxlength="100" placeholder="Ton club" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="profile-club-options" aria-describedby="profile-club-status" autocomplete="off"></label><ul id="profile-club-options" class="suggestion-list" role="listbox" hidden></ul><p id="profile-club-status" class="form-help" role="status" aria-live="polite">Choisis d’abord une ville pour suggérer des clubs.</p></div>
+            <p class="form-help wide">Les suggestions utilisent les services publics français : la ville saisie leur est transmise. Les clubs proposés sont des associations dont le nom contient « tennis de table » ou « ping-pong », pas une liste officielle FFTT. Tu peux toujours saisir librement.</p>
+            <div class="points-field"><label for="starting-points">Points au début de la saison</label><div class="points-stepper"><button id="points-decrease" type="button" aria-label="Diminuer les points de 1">−</button><input id="starting-points" name="startingPoints" type="number" step="0.01" min="0" max="5000" value="500" required><button id="points-increase" type="button" aria-label="Augmenter les points de 1">+</button></div></div>
+            <label class="wide">Bio <span>facultative</span><textarea name="bio" maxlength="300" rows="3" placeholder="Quelques mots sur toi et ton parcours"></textarea></label>
+            <p class="form-help wide">Ta bio et ta photo restent privées tant que tu ne les publies pas depuis Trouver des joueurs. Elles sont incluses si tu exportes ou envoies manuellement ta sauvegarde.</p>
+            <p class="form-help wide">Le total est une estimation à partir de ce point de départ et des matchs enregistrés. La dérive de mi-saison, les bonus et corrections officiels ne sont pas appliqués automatiquement.</p>
+            <p id="profile-draft-status" class="form-help wide" role="status">Aucune modification du profil en cours.</p>
+            <div class="wide"><button class="btn btn-primary" type="submit">Enregistrer mon profil</button></div>
+          </form>
+        </article>
+        <article class="panel profile-panel backup-panel"><h3>Sauvegarde de cet appareil</h3><p class="form-help">Exporte ton profil, tes matchs, ton matériel, ton répertoire et tes records dans un fichier personnel. La restauration remplace les données actuelles après confirmation. Ce fichier peut contenir des coordonnées : conserve-le en lieu sûr.</p><div class="backup-actions"><button id="backup-export" class="btn btn-outline" type="button">Exporter ma sauvegarde</button><button id="backup-import" class="btn btn-outline" type="button">Restaurer une sauvegarde</button><input id="backup-file" type="file" accept=".json,application/json" hidden></div></article>
+        <article class="panel profile-panel backup-panel cloud-panel">
+          <h3>Compte et sauvegarde en ligne</h3>
+          <p class="form-help">Connecte-toi par e-mail pour envoyer ou récupérer une copie privée. Ce pilote est réservé aux adultes. Les données restent aussi sur cet appareil, même après déconnexion : évite un appareil partagé.</p>
+          <p class="form-help">La sauvegarde n’est pas automatique. Pour passer sur un autre appareil, envoie d’abord une copie depuis l’appareil qui possède les dernières données, puis connecte-toi et restaure-la sur l’autre appareil. Compare les copies avant de choisir : la restauration remplace les données locales. Le lien de connexion ouvre le site en ligne.</p>
+          <p id="cloud-status" class="cloud-status" role="status" aria-live="polite">Vérification de la connexion…</p>
+          <p id="backup-state" class="form-help" role="status" aria-live="polite">État de la copie en ligne non vérifié.</p>
+          <p class="form-help">Les notifications de messages et de nouvelles séances sont facultatives et fonctionnent seulement tant que cette page reste ouverte et active ; elles ne sont pas des notifications push. Les alertes de séances doivent aussi être activées dans Séances.</p>
+          <p id="notification-status" class="form-help" role="status" aria-live="polite">Connecte-toi pour activer les notifications.</p>
+          <form id="cloud-login" class="cloud-login">
+            <label for="cloud-email">Adresse e-mail</label>
+            <input id="cloud-email" type="email" autocomplete="email" required maxlength="254" placeholder="ton adresse e-mail">
+            <label class="cloud-adult"><input id="cloud-adult" type="checkbox" required> Je confirme avoir au moins 18 ans.</label>
+            <button class="btn btn-primary" type="submit">Recevoir un lien de connexion</button>
+          </form>
+          <div id="cloud-actions" class="backup-actions" hidden>
+            <button id="cloud-compare" class="btn btn-outline" type="button">Comparer les copies</button>
+            <button id="cloud-upload" class="btn btn-primary" type="button">Envoyer une copie en ligne</button>
+            <button id="cloud-download" class="btn btn-outline" type="button">Restaurer la copie en ligne</button>
+            <button id="cloud-logout" class="btn btn-outline" type="button">Se déconnecter</button>
+            <button id="cloud-delete" class="btn btn-outline" type="button">Supprimer mon compte</button>
+            <button id="notification-toggle" class="btn btn-outline" type="button" disabled>Activer les notifications</button>
+          </div>
+        </article>
+      </section>
+      <footer>Ping Points · Projet indépendant, non affilié à la FFTT · <a href="https://www.fftt.com/wp-content/uploads/2026/07/reglement_generaux_2026_2027.pdf" target="_blank" rel="noopener noreferrer">Barème FFTT 2026–2027</a></footer>
+    </div>
+  </main>
+
+  <dialog id="match-dialog"><form id="match-form" class="dialog-form">
+    <div class="dialog-heading"><div><span class="eyebrow">SUR LA TABLE</span><h2 id="match-dialog-title">Ajouter un match</h2></div><button type="button" class="close-dialog" aria-label="Fermer">×</button></div>
+    <div class="form-grid">
+      <label>Date<input name="date" type="date" required></label>
+      <label>Adversaire<input name="opponent" list="match-opponents" required maxlength="120" placeholder="Nom et prénom"><datalist id="match-opponents"></datalist></label>
+      <label>Résultat<select name="result" required><option value="win">Victoire</option><option value="loss">Défaite</option></select></label>
+      <label>Type de match<select name="kind"><option value="official">Compétition</option><option value="friendly">Amical</option><option value="legacy" hidden>Ancienne saisie manuelle</option></select></label>
+      <label>Score <span>facultatif</span><input name="score" maxlength="30" placeholder="Ex. 3–2"></label>
+      <div class="official-fields wide" id="official-fields">
+        <p>Points de référence au début de la période du match (pas les points virtuels après chaque partie). Vérifie les valeurs reprises du dernier match : elles peuvent avoir changé.</p>
+        <div class="form-grid">
+          <label>Mes points de référence<input name="playerReference" type="number" min="0" max="5000" step="0.01" required placeholder="Ex. 554"></label>
+          <label>Points de l’adversaire<input name="opponentReference" type="number" min="0" max="5000" step="0.01" required placeholder="Ex. 564"></label>
+          <label>Coefficient de l’épreuve<select name="coefficient"><option value="1">1 — Championnat par équipes</option><option value="0.5">0,5</option><option value="0.75">0,75</option><option value="1.25">1,25</option><option value="1.5">1,5</option><option value="2">2</option></select></label>
+        </div>
+        <p>Indique les points exacts, pas seulement le classement 5, 6, etc.</p>
+      </div>
+      <div id="legacy-fields" class="official-fields wide" hidden><label>Variation saisie manuellement<input name="legacyDelta" type="number" step="any"></label><p>Cette ancienne saisie ne dispose pas de toutes les références nécessaires au recalcul.</p></div>
+      <label class="wide">Bilan personnel existant <span>facultatif</span><textarea name="notes" maxlength="1000" rows="3" placeholder="Tes notes privées"></textarea></label>
+      <label>Point fort <span>facultatif, privé</span><textarea name="strength" maxlength="500" rows="2" placeholder="Ce qui a bien fonctionné"></textarea></label>
+      <label>Axe de travail <span>facultatif, privé</span><textarea name="improvement" maxlength="500" rows="2" placeholder="Pour la prochaine séance"></textarea></label>
+      <div class="wide"><button class="btn btn-primary full" type="submit">Enregistrer le match</button></div>
+    </div>
+  </form></dialog>
+
+  <dialog id="player-dialog"><form id="player-form" class="dialog-form">
+    <div class="dialog-heading"><div><span class="eyebrow">TON RÉPERTOIRE</span><h2>Ajouter un joueur</h2></div><button type="button" class="close-dialog" aria-label="Fermer">×</button></div>
+    <div class="form-grid">
+      <label>Nom et prénom<input name="name" required maxlength="120" placeholder="Nom du joueur"></label>
+      <div class="suggestion-field"><label for="player-city">Ville<input id="player-city" name="city" required maxlength="100" placeholder="Sa ville" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="player-city-options" aria-describedby="player-city-status" autocomplete="off"></label><ul id="player-city-options" class="suggestion-list" role="listbox" hidden></ul><p id="player-city-status" class="form-help" role="status" aria-live="polite">Saisis au moins 2 caractères ou un code postal.</p></div>
+      <div class="suggestion-field"><label for="player-club">Club <span>facultatif</span><input id="player-club" name="club" maxlength="100" placeholder="Son club" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="player-club-options" aria-describedby="player-club-status" autocomplete="off"></label><ul id="player-club-options" class="suggestion-list" role="listbox" hidden></ul><p id="player-club-status" class="form-help" role="status" aria-live="polite">Choisis d’abord une ville pour suggérer des clubs.</p></div>
+      <p class="form-help wide">La ville saisie est transmise aux services publics français pour les suggestions. Les associations proposées ne constituent pas une liste officielle FFTT ; la saisie libre reste possible.</p>
+      <label>Contact <span>facultatif</span><input name="contact" maxlength="120" placeholder="Ex. e-mail communiqué"></label>
+      <p class="form-help wide">N’ajoute des coordonnées qu’avec l’accord de la personne. Elles restent sur cet appareil.</p>
+      <div class="wide"><button class="btn btn-primary full" type="submit">Ajouter au répertoire</button></div>
+    </div>
+  </form></dialog>
+  <dialog id="backup-dialog" aria-labelledby="backup-dialog-title"><form class="dialog-form" method="dialog"><div class="dialog-heading"><div><span class="eyebrow">RESTAURATION</span><h2 id="backup-dialog-title">Vérifie avant de remplacer</h2></div><button class="close-dialog" type="button" aria-label="Fermer">×</button></div><p>La sauvegarde remplacera entièrement les données de cet appareil. Rien ne sera ajouté aux données actuelles.</p><div id="backup-preview" class="backup-preview"></div><p class="form-help">Profil, objectif, matchs, répertoire et records sont concernés. Exporte d’abord une copie si tu souhaites conserver l’état actuel.</p><div class="backup-actions"><button id="backup-confirm" class="btn btn-primary" type="button">Remplacer les données</button><button class="close-dialog btn btn-outline" type="button">Annuler</button></div></form></dialog>
+</body>
+</html>

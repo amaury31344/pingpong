@@ -1,5 +1,11 @@
 # Ping Points
 
+## Rapports et historique
+
+- [Recherche des API de clubs, joueurs et resultats](docs/RAPPORT_API_TENNIS_DE_TABLE.md) : API FFTT / Smartping, alternatives, conditions d'acces et limites.
+- [Concept et business model](CONCEPT_BUSINESS_MODEL.md) : document de cadrage, pas une description des fonctions toutes disponibles.
+- [Archive des travaux locaux du 27 novembre 2026](docs/archives/2026-11-27/README.md) : seances, invitations et temps reel non finalises, conserves sans remplacer le code publie.
+
 Prototype indépendant de la FFTT. Ouvrir `index.html` via un serveur local, par exemple `python3 -m http.server 4173`, puis aller sur http://localhost:4173.
 
 - Le profil, les matchs et le répertoire personnel sont conservés dans le stockage local du navigateur. Une copie privée peut aussi être envoyée à Supabase après connexion, puis restaurée manuellement sur un autre appareil. Un annuaire séparé permet de rechercher les profils que les joueurs ont explicitement choisi de partager ; il ne s'agit pas d'un annuaire FFTT.
